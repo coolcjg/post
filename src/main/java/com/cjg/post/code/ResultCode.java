@@ -20,7 +20,11 @@ public enum ResultCode {
     USER_INVALID_PHONE(HttpStatus.BAD_REQUEST, "전화번호가 적합하지 않습니다."),
     USER_INVALID_EMAIL(HttpStatus.BAD_REQUEST, "이메일이 적합하지 않습니다."),
     USER_INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "비밀번호가 적합하지 않습니다."),
-    USER_INVALID_PROFILE_IMAGE(HttpStatus.BAD_REQUEST, "사진이 적합하지 않습니다."),
+    USER_INVALID_IMAGE(HttpStatus.BAD_REQUEST, "사진이 적합하지 않습니다."),
+
+    S3_IO_FAIL(HttpStatus.BAD_REQUEST, "이미지 처리가 실패하였습니다"),
+    S3_EXT_FAIL(HttpStatus.BAD_REQUEST, "이미지 확장자가 정합하지 않습니다"),
+    S3_SDK_FAIL(HttpStatus.BAD_REQUEST, "이미지 업로드에 실패하였습니다"),
 
     POST_SAVE_SUCCESS(HttpStatus.CREATED, "게시글 저장 성공"),
     POST_SEARCH_SUCCESS(HttpStatus.OK, "게시글 조회 성공"),

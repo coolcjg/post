@@ -31,6 +31,9 @@ public class User {
 	@Column(nullable = false)
 	private String salt;
 
+	@Column(nullable = false, length = 255)
+	private String image;
+
 	@CreationTimestamp
 	private LocalDateTime regDate;
 

@@ -11,8 +11,6 @@
     <div class="signupDiv">
         <form class="w-500">
 
-            <input type="hidden" id="checkId" value="N"/>
-
             <br>
             <br>
             <br>
@@ -23,7 +21,7 @@
 
             <div class="row g-3 align-items-center">
                 <div class="col-9">
-                    <input type="text" id="userId" class="form-control" th:onkeyup='|checkLength(this, 20)|'>
+                    <input type="text" id="userId" class="form-control" th:onkeyup='|changeUserId(this, 20)|'>
                 </div>
                 <div class="col-3">
                     <button type="button" class="btn btn-success" th:onclick='|checkUserId()|'>중복 확인</button>
@@ -39,32 +37,37 @@
 
 
             <label for="password1" class="form-label">비밀번호</label>
-            <input type="password" id="password1" class="form-control" aria-describedby="passwordHelpBlock" th:onkeyup='|checkLength(this, 20)|'>
-            <div id="passwordHelpBlock" class="form-text">
+            <input type="password" id="password1" class="form-control" aria-describedby="passwordHelpBlock1" th:onkeyup='|checkPassword1()|'>
+            <div id="passwordHelpBlock1" class="form-text">
                 영문자, 숫자 특수문자(`~!@#$%^&*()-_=+) 조합 8~20자리
             </div>
 
             <br>
 
             <label for="password2" class="form-label">비밀번호 확인</label>
-            <input type="password" id="password2" class="form-control" th:onkeyup='|checkLength(this, 20)|'>
+            <input type="password" id="password2" class="form-control" aria-describedby="passwordHelpBlock2" th:onkeyup='|checkPassword2()|'>
+            <div id="passwordHelpBlock2" class="form-text">
+                위에서 입력한 비밀번호와 같은 값을 입력해주세요.
+            </div>
 
             <br>
 
             <div class="mb-3">
-                <label for="formFile" class="form-label">프로필 이미지</label>
-                <input class="form-control" type="file" id="formFile">
+                <label for="image" class="form-label">프로필 이미지(jpg, png, 3MB제한)</label>
+                <input class="form-control" type="file" id="image" accept=".jpg, .png" th:onChange='|checkImage()|'>
             </div>
 
         </form>
-    <button class="btn btn-success" th:onclick="|location.href='@{/user/signup}'|">회원가입</button>
+        <button class="btn btn-success" th:onclick="|userInsert()|">회원가입</button>
     </div>
 
     <script>
-
-
+        let checkUserIdYN = 'N';
+        let checkPasswordYN = 'N';
+        let checkPasswordConfirmYN = 'N';
 
         function checkUserId(){
+            checkUserIdYN = 'N';
 
             const userId = $("#userId").val();
             const regex  = /^[a-z]+[a-z0-9]{3,19}$/g;
@@ -72,7 +75,6 @@
 
             if(result === false){
                 alert('아이디는 영문 소문자로 시작, 영문소문자 + 숫자 조합 4~20자리만 가능합니다.');
-                $("#checkId").val('N');
                 return;
             }
 
@@ -83,15 +85,52 @@
                     console.log(data);
                     if(data.data === 0){
                         alert('사용 가능한 아이디입니다.');
-                        $("#checkId").val('Y');
+                        checkUserIdYN = 'Y';
                     }else{
                         alert('사용 불가능한 아이디입니다.');
-                        $("#checkId").val('N');
                     }
                 },
             });
+        }
 
+        function validName(){
+            const name = $("#name").val();
+            return name.trim().length !== 0;
 
+        }
+
+        function checkPassword1(){
+
+            const password = $("#password1").val();
+            const regex  = /^(?=.*[0-9])(?=.*[A-Za-z])(?=.*[`~!@#$%^&*\\(\\)\-_=+]).{8,20}$/g
+            const result = regex.test(password);
+
+            if(result === true && password.search(/\s/) === -1){
+                checkPasswordYN = "Y";
+                $("#passwordHelpBlock1").hide();
+            }else{
+                checkPasswordYN = "N";
+                $("#passwordHelpBlock1").show();
+            }
+        }
+
+        function checkPassword2(){
+
+            const password1 = $("#password1").val();
+            const password2 = $("#password2").val();
+
+            if(password2 !== '' && password1===password2){
+                checkPasswordConfirmYN = 'Y';
+                $("#passwordHelpBlock2").hide();
+            }else{
+                checkPasswordConfirmYN = 'N';
+                $("#passwordHelpBlock2").show();
+            }
+        }
+
+        function changeUserId(el, maxLength){
+            checkUserIdYN = 'N';
+            checkLength(el, maxLength);
         }
 
         function checkLength(el, maxLength){
@@ -100,10 +139,77 @@
             }
         }
 
+        function userInsert(){
+
+            if(checkUserIdYN === 'N') {
+                alert('아이디 중복확인을 해주세요');
+                return;
+            }
+
+            if(!validName()){
+                alert('이름을 입력해주세요');
+                return;
+            }
+
+            if(checkPasswordYN === 'N'){
+                alert('적합한 비밀번호를 입력해주세요');
+                return;
+            }
+
+            if(checkPasswordConfirmYN === 'N'){
+                alert('비밀번호 확인을 해주세요');
+                return;
+            }
+
+            if(!validImage()){
+                alert('프로필 이미지를 추가해주세요');
+                return;
+            }
+
+            const formData = new FormData();
+
+            formData.append("userId", $("#userId").val());
+            formData.append("name", $("#name").val());
+            formData.append("password", CryptoJS.SHA256($("#password1").val()).toString(CryptoJS.enc.Hex));
+            formData.append("image", $("#image")[0].files[0]);
+
+            $.ajax({
+                url: "/v1/user",
+                type: "POST",
+                enctype : 'multipart/form-data',
+                data : formData,
+                processData : false,
+                contentType: false,
+                cache : false,
+                success: function (data, status, xhr) {
+                    console.log(data);
+                },
+            });
+
+        }
+
+        function validImage(){
+            const file = $("#image")[0].files[0];
+            return file !== undefined
+        }
+
+        function checkImage(){
+            const LIMIT = 1;
+            const file = $("#image")[0].files[0];
+            const maxSize = LIMIT * 1024 * 1024;
+
+            if(file.size > maxSize){
+                alert("파일첨부 사이즈는 " + LIMIT + "MB 이내로 가능합니다.");
+                $("#image").val('');
+            }
+        }
+
 
     </script>
 
     <script src="/js/jquery-3.7.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/sha256.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>
