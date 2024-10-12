@@ -61,10 +61,17 @@
         <button id="submitButton" class="btn btn-success" th:onclick="|userInsert()|">회원가입</button>
     </div>
 
+    <script src="/js/common.js"></script>
+
     <script>
         let checkUserIdYN = 'N';
         let checkPasswordYN = 'N';
         let checkPasswordConfirmYN = 'N';
+
+        function changeUserId(el, maxLength){
+            checkUserIdYN = 'N';
+            checkLength(el, maxLength);
+        }
 
         function checkUserId(){
             checkUserIdYN = 'N';
@@ -96,7 +103,6 @@
         function validName(){
             const name = $("#name").val();
             return name.trim().length !== 0;
-
         }
 
         function checkPassword1(){
@@ -125,17 +131,6 @@
             }else{
                 checkPasswordConfirmYN = 'N';
                 $("#passwordHelpBlock2").show();
-            }
-        }
-
-        function changeUserId(el, maxLength){
-            checkUserIdYN = 'N';
-            checkLength(el, maxLength);
-        }
-
-        function checkLength(el, maxLength){
-            if(el.value.length > maxLength){
-                el.value = el.value.substring(0, maxLength);
             }
         }
 
