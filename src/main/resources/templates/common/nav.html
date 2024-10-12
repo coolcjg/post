@@ -1,6 +1,6 @@
 <nav class="navbar flex-end bg-body-tertiary">
   <div class="me-3">
-    <button class="btn btn-primary" type="submit">로그인</button>
+    <button class="btn btn-primary" type="submit" th:onclick="|location.href='@{/user/login}'|">로그인</button>
     <button class="btn btn-success" type="submit" th:onclick="|location.href='@{/user/signup}'|">회원가입</button>
   </div>
 </nav>
