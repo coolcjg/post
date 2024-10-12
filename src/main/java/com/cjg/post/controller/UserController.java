@@ -24,7 +24,7 @@ public class UserController {
 
     @PostMapping(value = "/v1/user")
     public ResponseEntity<Response<UserResponseDto>> save(@ModelAttribute @Valid UserSaveRequestDto userSaveRequestDto){
-        return ResponseEntity.ok(Response.success(ResultCode.USER_SEARCH_SUCCESS, userService.save(userSaveRequestDto)));
+        return ResponseEntity.ok(Response.success(ResultCode.USER_SAVE_SUCCESS, userService.save(userSaveRequestDto)));
     }
 
 

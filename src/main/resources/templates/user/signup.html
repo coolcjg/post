@@ -58,7 +58,7 @@
             </div>
 
         </form>
-        <button class="btn btn-success" th:onclick="|userInsert()|">회원가입</button>
+        <button id="submitButton" class="btn btn-success" th:onclick="|userInsert()|">회원가입</button>
     </div>
 
     <script>
@@ -166,6 +166,8 @@
                 return;
             }
 
+            $("#submitButton").addClass("disabled");
+
             const formData = new FormData();
 
             formData.append("userId", $("#userId").val());
@@ -183,6 +185,13 @@
                 cache : false,
                 success: function (data, status, xhr) {
                     console.log(data);
+                    if(data.code === "201"){
+                        alert('회원 가입이 완료되었습니다.');
+                        location.href='/user/login';
+                    }else{
+                        alert('회원 가입이 실패하였습니다.');
+                        $("#submitButton").removeClass("disabled");
+                    }
                 },
             });
 
