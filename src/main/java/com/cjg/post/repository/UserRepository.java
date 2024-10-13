@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 public interface UserRepository extends JpaRepository<User, String> {
     Long countByUserId(String userId);
 
+    User findByUserId(String userId);
+
 }

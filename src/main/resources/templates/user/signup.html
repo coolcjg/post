@@ -30,12 +30,6 @@
 
             <br>
 
-            <label for="name" class="form-label">이름</label>
-            <input type="text" id="name" class="form-control" th:onkeyup='|checkLength(this, 20)|'>
-
-            <br>
-
-
             <label for="password1" class="form-label">비밀번호</label>
             <input type="password" id="password1" class="form-control" aria-describedby="passwordHelpBlock1" th:onkeyup='|checkPassword1()|'>
             <div id="passwordHelpBlock1" class="form-text">
@@ -49,6 +43,11 @@
             <div id="passwordHelpBlock2" class="form-text">
                 위에서 입력한 비밀번호와 같은 값을 입력해주세요.
             </div>
+
+            <br>
+
+            <label for="name" class="form-label">이름</label>
+            <input type="text" id="name" class="form-control" th:onkeyup='|checkLength(this, 20)|'>
 
             <br>
 
@@ -212,9 +211,9 @@
 
     </script>
 
-    <script src="/js/jquery-3.7.1.js"></script>
+    <th:block th:replace="~{/common/bottom}"></th:block>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/core.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/sha256.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
 </body>
 </html>

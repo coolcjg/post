@@ -16,7 +16,11 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint{
 	@Override
 	public void commence(HttpServletRequest request, HttpServletResponse response,
 			AuthenticationException authException) throws IOException, ServletException {
-		System.out.println(authException.getMessage());
+
+			System.out.println(authException);
+			System.out.println(authException.getCause());
+			System.out.println(authException.toString());
+			System.out.println("인증 에러 처리 : " + authException.getMessage());
 			setResponse(response);
     }
 	

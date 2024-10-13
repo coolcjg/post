@@ -14,6 +14,7 @@ public enum ResultCode {
     USER_SEARCH_SUCCESS(HttpStatus.OK, "사용자 조회 성공"),
     USER_MODIFY_SUCCESS(HttpStatus.OK, "사용자 수정 성공"),
     USER_DELETE_SUCCESS(HttpStatus.OK, "사용자 삭제 성공"),
+    USER_LOGIN_SUCCESS(HttpStatus.OK, "로그인 성공"),
 
     USER_SEARCH_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자가 없습니다"),
     USER_INVALID_USERID(HttpStatus.BAD_REQUEST, "아이디가 적합하지 않습니다."),
@@ -41,7 +42,12 @@ public enum ResultCode {
     REPLY_MODIFY_SUCCESS(HttpStatus.OK, "댓글 수정 성공"),
     REPLY_DELETE_SUCCESS(HttpStatus.OK, "댓글 삭제 성공"),
 
-    INVALID_PARAM(HttpStatus.BAD_REQUEST, "적합하지 않은 파라미터입니다");
+    INVALID_PARAM(HttpStatus.BAD_REQUEST, "적합하지 않은 파라미터입니다"),
+
+    JWT_EXPIRE(HttpStatus.BAD_REQUEST, "인증토큰 만료"),
+    JWT_ERROR(HttpStatus.BAD_REQUEST, "인증토큰 에러"),
+
+    REDIS_CONNECTION(HttpStatus.BAD_REQUEST, "레디스 연결 에러");
 
     private final HttpStatus httpStatus;
     private final String message;

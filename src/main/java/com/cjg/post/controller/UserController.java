@@ -2,7 +2,9 @@ package com.cjg.post.controller;
 
 
 import com.cjg.post.code.ResultCode;
+import com.cjg.post.dto.request.UserLoginRequestDto;
 import com.cjg.post.dto.request.UserSaveRequestDto;
+import com.cjg.post.dto.response.UserLoginResponseDto;
 import com.cjg.post.dto.response.UserResponseDto;
 import com.cjg.post.response.Response;
 import com.cjg.post.service.UserService;
@@ -25,6 +27,11 @@ public class UserController {
     @PostMapping(value = "/v1/user")
     public ResponseEntity<Response<UserResponseDto>> save(@ModelAttribute @Valid UserSaveRequestDto userSaveRequestDto){
         return ResponseEntity.ok(Response.success(ResultCode.USER_SAVE_SUCCESS, userService.save(userSaveRequestDto)));
+    }
+
+    @PostMapping(value = "/v1/user/login")
+    public ResponseEntity<Response<UserLoginResponseDto>> login(@RequestBody @Valid UserLoginRequestDto userLoginRequestDto){
+        return ResponseEntity.ok(Response.success(ResultCode.USER_LOGIN_SUCCESS, userService.login(userLoginRequestDto)));
     }
 
 
