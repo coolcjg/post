@@ -2,6 +2,7 @@ package com.cjg.post.controller;
 
 
 import com.cjg.post.code.ResultCode;
+import com.cjg.post.config.jwt.JwtTokenProvider;
 import com.cjg.post.dto.request.UserLoginRequestDto;
 import com.cjg.post.dto.request.UserSaveRequestDto;
 import com.cjg.post.dto.response.UserLoginResponseDto;
@@ -10,6 +11,8 @@ import com.cjg.post.response.Response;
 import com.cjg.post.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+
+    private final JwtTokenProvider jwtTokenProvider;
 
     @GetMapping(value = "/v1/user/{userId}/count")
     public ResponseEntity<Response<Long>> count(@PathVariable("userId") String userId){
@@ -31,8 +36,28 @@ public class UserController {
 
     @PostMapping(value = "/v1/user/login")
     public ResponseEntity<Response<UserLoginResponseDto>> login(@RequestBody @Valid UserLoginRequestDto userLoginRequestDto){
-        return ResponseEntity.ok(Response.success(ResultCode.USER_LOGIN_SUCCESS, userService.login(userLoginRequestDto)));
-    }
+        UserLoginResponseDto userLoginResponseDto = userService.login(userLoginRequestDto);
 
+        ResponseCookie responseCookie = ResponseCookie.from("accessToken",userLoginResponseDto.getAccessToken())
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(60*30)
+                .domain("localhost")
+                .build();
+
+        ResponseCookie responseCookie2 = ResponseCookie.from("refreshToken",userLoginResponseDto.getRefreshToken())
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(60*60*10)
+                .domain("localhost")
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
+                .header(HttpHeaders.SET_COOKIE, responseCookie2.toString())
+                .body(Response.success(ResultCode.USER_LOGIN_SUCCESS, userLoginResponseDto));
+    }
 
 }

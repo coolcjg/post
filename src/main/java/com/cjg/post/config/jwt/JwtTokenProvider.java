@@ -4,6 +4,7 @@ import com.cjg.post.code.ResultCode;
 import com.cjg.post.exception.CustomException;
 import com.cjg.post.service.UserDetailsServiceImpl;
 import io.jsonwebtoken.*;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -29,10 +30,10 @@ public class JwtTokenProvider {
 	private String secretKey;
 
 	@Value("${spring.jwt.token.access-expiration-time}")
-	private long accessExpirationTime;
+	public long accessExpirationTime;
 
 	@Value("${spring.jwt.token.refresh-expiration-time}")
-	private long refreshExpirationTime;
+	public long refreshExpirationTime;
 
 	@Autowired
 	private UserDetailsServiceImpl userDetailsService;
@@ -42,6 +43,19 @@ public class JwtTokenProvider {
 	 */
 	public String createAccessToken(Authentication authentication){
 		Claims claims = Jwts.claims().setSubject(authentication.getName());
+		Date now = new Date();
+		Date expireDate = new Date(now.getTime() + accessExpirationTime*60*1000);
+
+		return Jwts.builder()
+				.setClaims(claims)
+				.setIssuedAt(now)
+				.setExpiration(expireDate)
+				.signWith(SignatureAlgorithm.HS256, secretKey)
+				.compact();
+	}
+
+	public String createAccessToken(String userId){
+		Claims claims = Jwts.claims().setSubject(userId);
 		Date now = new Date();
 		Date expireDate = new Date(now.getTime() + accessExpirationTime*60*1000);
 
@@ -85,38 +99,76 @@ public class JwtTokenProvider {
 	 * 토큰으로부터 클레임을 만들고, 이를 통해 User 객체 생성해 Authentication 객체 반환
 	 */
 	public Authentication getAuthentication(String token) {
-		String userPrincipal = Jwts.parser().
+
+		String userPrincipal = getUserPrincipal(token);
+		UserDetails userDetails = userDetailsService.loadUserByUsername(userPrincipal);
+
+		return new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(), userDetails.getAuthorities());
+	}
+
+	public String getUserPrincipal(String token){
+		return Jwts.parser().
 				setSigningKey(secretKey)
 				.parseClaimsJws(token)
 				.getBody().getSubject();
-		UserDetails userDetails = userDetailsService.loadUserByUsername(userPrincipal);
-
-		return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
 	}
 
 	/**
 	 * http 헤더로부터 bearer 토큰을 가져옴.
 	 */
-	public String resolveToken(HttpServletRequest req) {
-		String bearerToken = req.getHeader("Authorization");
-		if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-			return bearerToken.substring(7);
+	public String[] resolveToken(HttpServletRequest req) {
+
+		String[] token = new String[2];
+
+		Cookie[] cookies = req.getCookies();
+		if(cookies != null){
+			for(Cookie cookie : cookies){
+				if("accessToken".equals(cookie.getName())){
+					token[0] =  cookie.getValue();
+				}
+
+				if("refreshToken".equals(cookie.getName())){
+					token[1] =  cookie.getValue();
+				}
+			}
 		}
-		return null;
+
+		return token;
 	}
 
 	/**
 	 * Access 토큰을 검증
 	 */
-	public boolean validateToken(String token){
+	public boolean validateToken(String[] token){
 		try{
-			Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+			Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token[0]);
 			return true;
 		} catch(ExpiredJwtException e) {
-			log.error(e.getMessage());
+
+			String userPrincipal = getUserPrincipal(token[1]);
+
+			String savedRefreshToken  = redisTemplate.opsForValue().get(userPrincipal);
+
+			if(token[1].equals(savedRefreshToken)){
+				validateRefreshToken(token[1]);
+				token[0] = createAccessToken(userPrincipal);
+				return true;
+			}
+
+			throw new CustomException(ResultCode.JWT_EXPIRE);
+
+		} catch(JwtException e) {
+			throw new CustomException(ResultCode.JWT_EXPIRE);
+		}
+	}
+
+	public boolean validateRefreshToken(String refreshToken){
+		try{
+			Jwts.parser().setSigningKey(secretKey).parseClaimsJws(refreshToken);
+			return true;
+		} catch(ExpiredJwtException e) {
 			throw new CustomException(ResultCode.JWT_EXPIRE);
 		} catch(JwtException e) {
-			log.error(e.getMessage());
 			throw new CustomException(ResultCode.JWT_EXPIRE);
 		}
 	}

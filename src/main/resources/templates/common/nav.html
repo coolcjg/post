@@ -1,21 +1,23 @@
-<nav class="navbar flex-end bg-body-tertiary">
-  <div class="me-3">
-    <button class="btn btn-primary" type="submit" th:onclick="|location.href='@{/user/login}'|">로그인</button>
-    <button class="btn btn-success" type="submit" th:onclick="|location.href='@{/user/signup}'|">회원가입</button>
-  </div>
-</nav>
+<html lang="en" xmlns:th="http://www.w3.org/1999/html" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+  <nav class="navbar flex-end bg-body-tertiary" sec:authorize="isAnonymous()">
+    <div class="me-3">
+      <button class="btn btn-primary" type="submit" th:onclick="|location.href='@{/user/login}'|">로그인</button>
+      <button class="btn btn-success" type="submit" th:onclick="|location.href='@{/user/signup}'|">회원가입</button>
+    </div>
+  </nav>
 
-<nav class="d-none navbar flex-end bg-body-tertiary">
+  <nav class="navbar flex-end bg-body-tertiary" sec:authorize="isAuthenticated()">
 
-  <div class="me-3">
-    <img src="https://portfolioshop.speedgabia.com/kpyours/sample-SK-LS-28mm-f-4.5.jpg" class="img-thumbnail post-nav-image" alt="">
-  </div>
+    <div class="me-3">
+      <img src="https://portfolioshop.speedgabia.com/kpyours/sample-SK-LS-28mm-f-4.5.jpg" class="img-thumbnail post-nav-image" alt="">
+    </div>
 
-  <div class="me-3">
-    <span class="navbar-text">최종규님 환영합니다.</span>
-  </div>
+    <div class="me-3">
+      <span class="navbar-text">최종규님 환영합니다.</span>
+    </div>
 
-  <div class="me-3">
-    <button class="btn btn-danger" type="submit">로그아웃</button>
-  </div>
-</nav>
+    <div class="me-3">
+      <button class="btn btn-danger" type="submit">로그아웃</button>
+    </div>
+  </nav>
+</html>

@@ -1,18 +1,16 @@
 package com.cjg.post.exception;
 
 
-
-
 import com.cjg.post.code.ResultCode;
 import com.cjg.post.response.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-@RestControllerAdvice
+@ControllerAdvice
 public class ExceptionAdvice {
 
     //커스텀 에러 처리

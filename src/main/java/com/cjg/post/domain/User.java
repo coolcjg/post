@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -30,6 +31,10 @@ public class User {
 
 	@Column(nullable = false, length = 255)
 	private String image;
+
+	@Column(nullable = false, length=10)
+	@ColumnDefault("'ROLE_USER'")
+	private String auth;
 
 	@CreationTimestamp
 	private LocalDateTime regDate;

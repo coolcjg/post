@@ -47,7 +47,12 @@
             contentType: 'application/json; charset=utf-8',
             data : json,
             success: function (data, status, xhr) {
-                console.log(data);
+                if(data.code === "200"){
+                    location.href = "/post/list";
+                }else{
+                    alert('로그인이 실패하였습니다.');
+                    $("#submitButton").removeClass("disabled");
+                }
             },
         });
     }

@@ -1,6 +1,7 @@
 package com.cjg.post.service;
 
 import com.cjg.post.code.ResultCode;
+import com.cjg.post.code.UserRole;
 import com.cjg.post.config.jwt.JwtTokenProvider;
 import com.cjg.post.domain.User;
 import com.cjg.post.dto.request.UserLoginRequestDto;
@@ -15,8 +16,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +42,8 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final UserDetailsServiceImpl userDetailsService;
+
     public Long count(String userId){
         return userRepository.countByUserId(userId);
     }
@@ -42,6 +52,7 @@ public class UserService {
 
         User user = User.builder()
                 .userId(dto.getUserId())
+                .auth(UserRole.ADMIN.getValue())
                 .name(dto.getName())
                 .image(s3.upload(dto.getImage()))
                 .password(passwordEncoder.encode(dto.getPassword()))
@@ -66,8 +77,14 @@ public class UserService {
 
             if(passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
 
-                UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user.getUserId(), requestDto.getPassword());
+                Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
+                grantedAuthorities.add(new SimpleGrantedAuthority(UserRole.USER.getValue()));
+
+                UserDetails userDetails = userDetailsService.loadUserByUsername(requestDto.getUserId());
+
+                UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userDetails, requestDto.getPassword(), grantedAuthorities);
                 Authentication authentication = authenticationManager.authenticate(token);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
                 String accessToken = jwt.createAccessToken(authentication);
                 String refreshToken = jwt.createRefreshToken(authentication);
 
