@@ -6,6 +6,7 @@ import com.cjg.post.service.UserDetailsServiceImpl;
 import io.jsonwebtoken.*;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,7 +99,7 @@ public class JwtTokenProvider {
 	/**
 	 * 토큰으로부터 클레임을 만들고, 이를 통해 User 객체 생성해 Authentication 객체 반환
 	 */
-	public Authentication getAuthentication(String token) {
+	public Authentication getAuthentication(String token){
 
 		String userPrincipal = getUserPrincipal(token);
 		UserDetails userDetails = userDetailsService.loadUserByUsername(userPrincipal);
@@ -146,7 +147,6 @@ public class JwtTokenProvider {
 		} catch(ExpiredJwtException e) {
 
 			String userPrincipal = getUserPrincipal(token[1]);
-
 			String savedRefreshToken  = redisTemplate.opsForValue().get(userPrincipal);
 
 			if(token[1].equals(savedRefreshToken)){
@@ -155,11 +155,10 @@ public class JwtTokenProvider {
 				return true;
 			}
 
-			throw new CustomException(ResultCode.JWT_EXPIRE);
-
 		} catch(JwtException e) {
-			throw new CustomException(ResultCode.JWT_EXPIRE);
+			log.error(e);
 		}
+		return false;
 	}
 
 	public boolean validateRefreshToken(String refreshToken){
@@ -170,6 +169,19 @@ public class JwtTokenProvider {
 			throw new CustomException(ResultCode.JWT_EXPIRE);
 		} catch(JwtException e) {
 			throw new CustomException(ResultCode.JWT_EXPIRE);
+		}
+	}
+
+	public void removeTokenFromCookie(HttpServletRequest request, HttpServletResponse response){
+		Cookie[] cookies = request.getCookies();
+		if(cookies != null){
+			System.out.println("쿠키제거 작업중");
+			for(Cookie cookie : cookies){
+				cookie.setValue("");
+				cookie.setPath("/");
+				cookie.setMaxAge(0);
+				response.addCookie(cookie);
+			}
 		}
 	}
 }

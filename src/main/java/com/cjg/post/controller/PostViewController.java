@@ -17,6 +17,10 @@ public class PostViewController {
 
     @GetMapping(value = "/post/list")
     public String list(@AuthenticationPrincipal CustomUserDetails customUserDetails){
+        if(customUserDetails != null){
+            System.out.println(customUserDetails.getUsername());
+            System.out.println(customUserDetails.getName());
+        }
         return "post/list";
     }
 

@@ -9,11 +9,11 @@
   <nav class="navbar flex-end bg-body-tertiary" sec:authorize="isAuthenticated()">
 
     <div class="me-3">
-      <img src="https://portfolioshop.speedgabia.com/kpyours/sample-SK-LS-28mm-f-4.5.jpg" class="img-thumbnail post-nav-image" alt="">
+      <img th:src="${#authentication.principal.image}" class="img-thumbnail post-nav-image" alt="">
     </div>
 
     <div class="me-3">
-      <span class="navbar-text">최종규님 환영합니다.</span>
+      <span class="navbar-text" th:text="${#authentication.principal.name}"></span>
     </div>
 
     <div class="me-3">
