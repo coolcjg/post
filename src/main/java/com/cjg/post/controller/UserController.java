@@ -42,7 +42,7 @@ public class UserController {
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
-                .maxAge(60*30)
+                //.maxAge(60*30)
                 .domain("localhost")
                 .build();
 
@@ -50,7 +50,7 @@ public class UserController {
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
-                .maxAge(60*60*10)
+                //.maxAge(60*60*10)
                 .domain("localhost")
                 .build();
 
