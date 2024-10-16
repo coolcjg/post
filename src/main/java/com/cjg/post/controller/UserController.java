@@ -3,12 +3,15 @@ package com.cjg.post.controller;
 
 import com.cjg.post.code.ResultCode;
 import com.cjg.post.config.jwt.JwtTokenProvider;
+import com.cjg.post.dto.request.UserDeleteRequestDto;
 import com.cjg.post.dto.request.UserLoginRequestDto;
 import com.cjg.post.dto.request.UserSaveRequestDto;
 import com.cjg.post.dto.response.UserLoginResponseDto;
 import com.cjg.post.dto.response.UserResponseDto;
 import com.cjg.post.response.Response;
 import com.cjg.post.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -42,7 +45,7 @@ public class UserController {
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
-                //.maxAge(60*30)
+                //.maxAge(60*30) 세션으로 설정
                 .domain("localhost")
                 .build();
 
@@ -50,7 +53,7 @@ public class UserController {
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
-                //.maxAge(60*60*10)
+                //.maxAge(60*60*10) 세션으로 설정
                 .domain("localhost")
                 .build();
 
@@ -63,6 +66,13 @@ public class UserController {
     @PutMapping(value = "/v1/user")
     public ResponseEntity<Response<UserResponseDto>> modify(@ModelAttribute @Valid UserSaveRequestDto userSaveRequestDto){
         return ResponseEntity.ok(Response.success(ResultCode.USER_MODIFY_SUCCESS, userService.modify(userSaveRequestDto)));
+    }
+
+    @DeleteMapping(value = "/v1/user")
+    public ResponseEntity<Response<Void>> delete(HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid UserDeleteRequestDto dto){
+        userService.delete(dto);
+        jwtTokenProvider.removeTokenFromCookie(request, response);
+        return ResponseEntity.ok(Response.success(ResultCode.USER_DELETE_SUCCESS));
     }
 
 }

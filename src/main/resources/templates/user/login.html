@@ -11,59 +11,81 @@
 
     <th:block th:replace="~{/common/nav}"></th:block>
 
-<div class="signupDiv">
-    <form class="w-300">
+    <div class="signupDiv">
+        <form class="w-300">
 
-        <br>
-        <br>
+            <br>
+            <br>
 
-        <label for="userId" class="col-form-label">아이디</label>
-        <input type="text" id="userId" class="form-control">
+            <label for="userId" class="col-form-label">아이디</label>
+            <input type="text" id="userId" class="form-control">
 
-        <br>
+            <br>
 
-        <label for="password" class="form-label">비밀번호</label>
-        <input type="password" id="password" class="form-control">
+            <label for="password" class="form-label">비밀번호</label>
+            <input type="password" id="password" class="form-control">
 
-        <br>
+            <br>
 
-    </form>
+        </form>
 
-    <button id="submitButton" class="btn btn-success" th:onclick="|login()|">로그인</button>
-</div>
+        <button id="submitButton" class="btn btn-success" th:onclick="|login()|">로그인</button>
+    </div>
 
-<script>
+    <th:block th:replace="~{/common/bottom}"></th:block>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/sha256.js"></script>
+    <script src="/js/common.js"></script>
+    <script src="/js/user/user.js"></script>
 
-    function login(){
-        $("#submitButton").addClass("disabled");
+    <script>
 
-        const json = JSON.stringify({
-            userId : $("#userId").val()
-            , password : CryptoJS.SHA256($("#password").val()).toString(CryptoJS.enc.Hex)
-        })
+        $("#password")[0].addEventListener('keyup', event => enter(event));
 
-        $.ajax({
-            url: "/v1/user/login",
-            type: "POST",
-            dataType: 'json',
-            contentType: 'application/json; charset=utf-8',
-            data : json,
-            success: function (data, status, xhr) {
-                if(data.code === "200"){
-                    location.href = "/post/list";
-                }else{
-                    alert('로그인이 실패하였습니다.');
-                    $("#submitButton").removeClass("disabled");
-                }
-            },
-        });
-    }
+        function enter(e){
+            if(e.keyCode === 13 ){
+                login();
+            }
+        }
 
-</script>
+        function login(){
 
-<th:block th:replace="~{/common/bottom}"></th:block>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/core.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/sha256.js"></script>
+            if(!checkBlank("userId")){
+                alert('아이디를 입력해주세요');
+                return;
+            }
+
+            if(!checkBlank("password")){
+                alert('비밀번호를 입력해주세요');
+                return;
+            }
+
+            $("#submitButton").addClass("disabled");
+
+            const json = JSON.stringify({
+                userId : $("#userId").val()
+                , password : CryptoJS.SHA256($("#password").val()).toString(CryptoJS.enc.Hex)
+            })
+
+            $.ajax({
+                url: "/v1/user/login",
+                type: "POST",
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                data : json,
+                success: function (data, status, xhr) {
+                    if(data.code === "200"){
+                        location.href = "/post/list";
+                    }else{
+                        alert('로그인이 실패하였습니다.');
+                        $("#submitButton").removeClass("disabled");
+                    }
+                },
+            });
+        }
+
+    </script>
+
 
 </body>
 </html>

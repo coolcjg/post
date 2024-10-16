@@ -3,3 +3,7 @@ function checkLength(el, maxLength){
         el.value = el.value.substring(0, maxLength);
     }
 }
+
+function checkBlank(elementId){
+    return $("#" + elementId).val().trim().length !== 0;
+}

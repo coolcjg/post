@@ -4,6 +4,7 @@ import com.cjg.post.code.ResultCode;
 import com.cjg.post.code.UserRole;
 import com.cjg.post.config.jwt.JwtTokenProvider;
 import com.cjg.post.domain.User;
+import com.cjg.post.dto.request.UserDeleteRequestDto;
 import com.cjg.post.dto.request.UserLoginRequestDto;
 import com.cjg.post.dto.request.UserSaveRequestDto;
 import com.cjg.post.dto.response.UserLoginResponseDto;
@@ -123,5 +124,22 @@ public class UserService {
                 .name(dto.getName())
                 .image(user.getImage())
                 .build();
+    }
+
+    @Transactional
+    public void delete(UserDeleteRequestDto dto){
+        User user = userRepository.findByUserId(dto.getUserId());
+
+        if(user != null){
+            if(passwordEncoder.matches(dto.getPassword(), user.getPassword())){
+                s3.deleteImageToS3(user.getImage().substring(user.getImage().lastIndexOf("/")+1));
+                userRepository.deleteByUserId(dto.getUserId());
+                SecurityContextHolder.clearContext();
+            }else{
+                throw new CustomException(ResultCode.USER_INVALID_PASSWORD);
+            }
+        }else{
+            throw new CustomException(ResultCode.USER_SEARCH_NOT_FOUND);
+        }
     }
 }

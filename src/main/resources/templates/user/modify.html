@@ -43,7 +43,8 @@
             </div>
 
         </form>
-        <button id="submitButton" class="btn btn-success" th:onclick="|userModify()|">수정</button>
+        <button id="modifyButton" class="btn btn-success" th:onclick="|userModify()|">수정</button>
+        <button id="deleteButton" class="btn btn-danger mt-2" th:onclick="|userDelete()|">탈퇴</button>
     </div>
 
     <th:block th:replace="~{/common/bottom}"></th:block>
@@ -55,6 +56,16 @@
 
     <script>
         /*<![CDATA[*/
+
+        function disableButton(){
+            $("#modifyButton").addClass("disabled");
+            $("#deleteButton").addClass("disabled");
+        }
+
+        function enableButton(){
+            $("#modifyButton").removeClass("disabled");
+            $("#deleteButton").removeClass("disabled");
+        }
 
         function userModify(){
 
@@ -73,7 +84,7 @@
                 return;
             }
 
-            $("#submitButton").addClass("disabled");
+            disableButton();
 
             const formData = new FormData();
 
@@ -100,7 +111,50 @@
                         location.href='/user/view';
                     }else{
                         alert('회원정보 수정이 실패하였습니다.');
-                        $("#submitButton").removeClass("disabled");
+                        enableButton();
+                    }
+                },
+            });
+
+        }
+
+        function userDelete(){
+
+            if(checkPasswordYN === 'N'){
+                alert('적합한 비밀번호를 입력해주세요');
+                return;
+            }
+
+            if(checkPasswordConfirmYN === 'N'){
+                alert('비밀번호 확인을 해주세요');
+                return;
+            }
+
+            disableButton();
+
+            if(!confirm("탈퇴하시겠습니까?")){
+                return;
+                enableButton();
+            }
+
+            const json = JSON.stringify({
+                userId : '[[${#authentication.name}]]'
+                , password : CryptoJS.SHA256($("#password1").val()).toString(CryptoJS.enc.Hex)
+            })
+
+            $.ajax({
+                url: "/v1/user",
+                type: "DELETE",
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                data : json,
+                success: function (data, status, xhr) {
+                    if(data.code === "200"){
+                        alert('회원 정보가 삭제되었습니다');
+                        location.href = "/post/list";
+                    }else{
+                        alert('탈퇴 처리가 실패하였습니다.');
+                        enableButton();
                     }
                 },
             });

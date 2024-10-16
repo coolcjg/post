@@ -1,11 +1,6 @@
 let checkPasswordYN = 'N';
 let checkPasswordConfirmYN = 'N';
 
-function validName() {
-    const name = $("#name").val();
-    return name.trim().length !== 0;
-}
-
 function checkPassword1() {
 
     const password = $("#password1").val();
@@ -41,7 +36,7 @@ function validImage() {
 }
 
 function checkImage() {
-    const LIMIT = 1;
+    const LIMIT = 3;
     const file = $("#image")[0].files[0];
     const maxSize = LIMIT * 1024 * 1024;
 
