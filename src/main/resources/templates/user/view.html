@@ -8,26 +8,29 @@
     <link href="/css/style.css" type="text/css" rel="stylesheet">
 </head>
 <body>
+
+    <th:block th:replace="~{/common/nav}"></th:block>
+
+
     <div class="signupDiv">
-        <form class="w-400">
 
-            <br>
-            <br>
-            <br>
+        <div>
+            <span class="fs-5">회원정보</span>
+        </div>
 
-            <label class="form-label">이름</label>
-                <span class="navbar-text" th:text="${#authentication.principal.name}"></span>
-
-
-            <br>
-
-            <div class="mb-3">
-                <label for="formFile" class="form-label">프로필 이미지</label>
-                <input class="form-control" type="file" id="formFile">
-            </div>
-
-        </form>
-    <button class="btn btn-success" th:onclick="|location.href='@{/user/signup}'|">회원가입</button>
+        <table class="table">
+            <tbody>
+            <tr>
+                <th scope="row">이름</th>
+                <td th:text="${#authentication.principal.name}"></td>
+            </tr>
+            <tr>
+                <th scope="row">프로필</th>
+                <td><img th:src="${#authentication.principal.image}" class="img-thumbnail post-nav-image" alt=""></td>
+            </tr>
+            </tbody>
+        </table>
+        <button class="btn btn-success" th:onclick="|location.href='@{/user/modify}'|">수정</button>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>

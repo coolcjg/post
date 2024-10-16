@@ -8,6 +8,9 @@
     <link href="/css/style.css" type="text/css" rel="stylesheet">
 </head>
 <body>
+
+    <th:block th:replace="~{/common/nav}"></th:block>
+
     <div class="signupDiv">
         <form class="w-500">
 
@@ -58,15 +61,16 @@
 
         </form>
         <button id="submitButton" class="btn btn-success" th:onclick="|userInsert()|">회원가입</button>
-        <button class="btn btn-primary mt-2" th:onclick="|location.href='@{/post/list}'|">리스트 페이지</button>
     </div>
 
+    <th:block th:replace="~{/common/bottom}"></th:block>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/sha256.js"></script>
     <script src="/js/common.js"></script>
+    <script src="/js/user/user.js"></script>
 
     <script>
         let checkUserIdYN = 'N';
-        let checkPasswordYN = 'N';
-        let checkPasswordConfirmYN = 'N';
 
         function changeUserId(el, maxLength){
             checkUserIdYN = 'N';
@@ -98,40 +102,6 @@
                     }
                 },
             });
-        }
-
-        function validName(){
-            const name = $("#name").val();
-            return name.trim().length !== 0;
-        }
-
-        function checkPassword1(){
-
-            const password = $("#password1").val();
-            const regex  = /^(?=.*[0-9])(?=.*[A-Za-z])(?=.*[`~!@#$%^&*\\(\\)\-_=+]).{8,20}$/g
-            const result = regex.test(password);
-
-            if(result === true && password.search(/\s/) === -1){
-                checkPasswordYN = "Y";
-                $("#passwordHelpBlock1").hide();
-            }else{
-                checkPasswordYN = "N";
-                $("#passwordHelpBlock1").show();
-            }
-        }
-
-        function checkPassword2(){
-
-            const password1 = $("#password1").val();
-            const password2 = $("#password2").val();
-
-            if(password2 !== '' && password1===password2){
-                checkPasswordConfirmYN = 'Y';
-                $("#passwordHelpBlock2").hide();
-            }else{
-                checkPasswordConfirmYN = 'N';
-                $("#passwordHelpBlock2").show();
-            }
         }
 
         function userInsert(){
@@ -191,29 +161,9 @@
             });
 
         }
-
-        function validImage(){
-            const file = $("#image")[0].files[0];
-            return file !== undefined
-        }
-
-        function checkImage(){
-            const LIMIT = 1;
-            const file = $("#image")[0].files[0];
-            const maxSize = LIMIT * 1024 * 1024;
-
-            if(file.size > maxSize){
-                alert("파일첨부 사이즈는 " + LIMIT + "MB 이내로 가능합니다.");
-                $("#image").val('');
-            }
-        }
-
-
     </script>
 
-    <th:block th:replace="~{/common/bottom}"></th:block>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/core.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/sha256.js"></script>
+
 
 </body>
 </html>

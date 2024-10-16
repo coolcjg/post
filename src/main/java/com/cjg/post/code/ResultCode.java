@@ -47,7 +47,9 @@ public enum ResultCode {
     JWT_EXPIRE(HttpStatus.BAD_REQUEST, "인증토큰 만료"),
     JWT_ERROR(HttpStatus.BAD_REQUEST, "인증토큰 에러"),
 
-    REDIS_CONNECTION(HttpStatus.BAD_REQUEST, "레디스 연결 에러");
+    REDIS_CONNECTION(HttpStatus.BAD_REQUEST, "레디스 연결 에러"),
+
+    AES_FAIL(HttpStatus.BAD_REQUEST, "AES암호화 에러");
 
     private final HttpStatus httpStatus;
     private final String message;

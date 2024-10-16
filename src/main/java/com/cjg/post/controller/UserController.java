@@ -60,4 +60,9 @@ public class UserController {
                 .body(Response.success(ResultCode.USER_LOGIN_SUCCESS, userLoginResponseDto));
     }
 
+    @PutMapping(value = "/v1/user")
+    public ResponseEntity<Response<UserResponseDto>> modify(@ModelAttribute @Valid UserSaveRequestDto userSaveRequestDto){
+        return ResponseEntity.ok(Response.success(ResultCode.USER_MODIFY_SUCCESS, userService.modify(userSaveRequestDto)));
+    }
+
 }

@@ -10,8 +10,9 @@ import com.cjg.post.dto.response.UserLoginResponseDto;
 import com.cjg.post.dto.response.UserResponseDto;
 import com.cjg.post.exception.CustomException;
 import com.cjg.post.repository.UserRepository;
+import com.cjg.post.util.AES256;
 import com.cjg.post.util.S3;
-import com.cjg.post.util.SHA256;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -32,8 +33,6 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    private final SHA256 sha256;
-
     private final S3 s3;
 
     private final JwtTokenProvider jwt;
@@ -44,6 +43,8 @@ public class UserService {
 
     private final UserDetailsServiceImpl userDetailsService;
 
+    private final AES256 aes256;
+
     public Long count(String userId){
         return userRepository.countByUserId(userId);
     }
@@ -53,7 +54,7 @@ public class UserService {
         User user = User.builder()
                 .userId(dto.getUserId())
                 .auth(UserRole.ADMIN.getValue())
-                .name(dto.getName())
+                .name(aes256.encrypt(dto.getName()))
                 .image(s3.upload(dto.getImage()))
                 .password(passwordEncoder.encode(dto.getPassword()))
                 .build();
@@ -100,5 +101,27 @@ public class UserService {
             }
 
         }
+    }
+
+
+    @Transactional
+    public UserResponseDto modify(UserSaveRequestDto dto){
+
+        User user = userRepository.findByUserId(dto.getUserId());
+        user.setName(aes256.encrypt(dto.getName()));
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+
+        if(dto.getImage() != null){
+            String image = user.getImage().substring(user.getImage().lastIndexOf("/")+1);
+            s3.deleteImageToS3(image);
+            String newImage = s3.upload(dto.getImage());
+            user.setImage(newImage);
+        }
+
+        return UserResponseDto.builder()
+                .userId(dto.getUserId())
+                .name(dto.getName())
+                .image(user.getImage())
+                .build();
     }
 }

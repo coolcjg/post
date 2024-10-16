@@ -8,49 +8,110 @@
     <link href="/css/style.css" type="text/css" rel="stylesheet">
 </head>
 <body>
+
+    <th:block th:replace="~{/common/nav}"></th:block>
+
     <div class="signupDiv">
         <form class="w-400">
 
             <br>
-            <br>
-            <br>
 
             <label for="name" class="form-label">이름</label>
-            <input type="text" id="name" class="form-control">
+            <input type="text" id="name" class="form-control" th:onkeyup='|checkLength(this, 20)|' th:value="${#authentication.principal.name}">
 
             <br>
 
             <label for="password1" class="form-label">비밀번호</label>
-            <input type="password" id="password1" class="form-control" aria-describedby="passwordHelpBlock">
-            <div id="passwordHelpBlock" class="form-text">
+            <input type="password" id="password1" class="form-control" aria-describedby="passwordHelpBlock1" th:onkeyup='|checkPassword1()|'>
+            <div id="passwordHelpBlock1" class="form-text">
                 영문자, 숫자 특수문자(`~!@#$%^&*()-_=+) 조합 8~20자리
             </div>
 
             <br>
 
             <label for="password2" class="form-label">비밀번호 확인</label>
-            <input type="password" id="password2" class="form-control">
-
-            <br>
-
-            <label for="phone" class="form-label">전화번호</label>
-            <input type="password" id="phone" class="form-control">
-
-            <br>
-
-            <label for="email" class="form-label">이메일</label>
-            <input type="email" id="email" class="form-control">
+            <input type="password" id="password2" class="form-control" aria-describedby="passwordHelpBlock2" th:onkeyup='|checkPassword2()|'>
+            <div id="passwordHelpBlock2" class="form-text">
+                위에서 입력한 비밀번호와 같은 값을 입력해주세요.
+            </div>
 
             <br>
 
             <div class="mb-3">
-                <label for="formFile" class="form-label">프로필 이미지</label>
-                <input class="form-control" type="file" id="formFile">
+                <label for="image" class="form-label">프로필 이미지(jpg, png, 3MB제한)</label>
+                <input class="form-control" type="file" id="image" accept=".jpg, .png" th:onChange='|checkImage()|'>
             </div>
 
         </form>
-    <button class="btn btn-success" th:onclick="|location.href='@{/user/signup}'|">회원가입</button>
+        <button id="submitButton" class="btn btn-success" th:onclick="|userModify()|">수정</button>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <th:block th:replace="~{/common/bottom}"></th:block>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/sha256.js"></script>
+    <script src="/js/common.js"></script>
+    <script src="/js/user/user.js"></script>
+
+
+    <script>
+        /*<![CDATA[*/
+
+        function userModify(){
+
+            if(!validName()){
+                alert('이름을 입력해주세요');
+                return;
+            }
+
+            if(checkPasswordYN === 'N'){
+                alert('적합한 비밀번호를 입력해주세요');
+                return;
+            }
+
+            if(checkPasswordConfirmYN === 'N'){
+                alert('비밀번호 확인을 해주세요');
+                return;
+            }
+
+            $("#submitButton").addClass("disabled");
+
+            const formData = new FormData();
+
+            formData.append("userId", '[[${#authentication.name}]]');
+            formData.append("name", $("#name").val());
+            formData.append("password", CryptoJS.SHA256($("#password1").val()).toString(CryptoJS.enc.Hex));
+
+            if($("#image")[0].files[0] !== undefined){
+                formData.append("image", $("#image")[0].files[0]);
+            }
+
+            $.ajax({
+                url: "/v1/user",
+                type: "PUT",
+                enctype : 'multipart/form-data',
+                data : formData,
+                processData : false,
+                contentType: false,
+                cache : false,
+                success: function (data, status, xhr) {
+                    console.log(data);
+                    if(data.code === "200"){
+                        alert('회원정보 수정이 완료되었습니다.');
+                        location.href='/user/view';
+                    }else{
+                        alert('회원정보 수정이 실패하였습니다.');
+                        $("#submitButton").removeClass("disabled");
+                    }
+                },
+            });
+
+        }
+
+        /*]]>*/
+    </script>
+
+
+    <th:block th:replace="~{/common/bottom}"></th:block>
+
 </body>
 </html>

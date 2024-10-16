@@ -61,6 +61,9 @@ dependencies {
 
     //S3
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+    
+    //S3:파일 삭제시 라이브러리 경고때문에 추가 : JAXB is unavailable. Will fallback to SDK implementation which may be less performant.If you are using Java 9+, you will need to include javax.xml.bind:jaxb-api as a dependency.
+    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.2'
 }
 
 tasks.named('test') {

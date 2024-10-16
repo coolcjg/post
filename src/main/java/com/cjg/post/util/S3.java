@@ -99,4 +99,18 @@ public class S3 {
 
         return amazonS3.getUrl(bucketName, s3FileName).toString();
     }
+
+    public void deleteImageToS3(String fileName) {
+        try{
+            boolean isObjectExist = amazonS3.doesObjectExist(bucketName, fileName);
+            if(isObjectExist){
+                amazonS3.deleteObject(bucketName,fileName);
+            }
+        }catch (SdkClientException e){
+            System.out.println(e.getCause());
+            System.out.println(e.getMessage());
+            System.out.println(e.getStackTrace());
+            throw new CustomException(ResultCode.S3_SDK_FAIL);
+        }
+    }
 }
