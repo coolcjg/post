@@ -1,5 +1,7 @@
 package com.cjg.post.controller;
 
+import com.cjg.post.domain.CustomUserDetails;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -19,5 +21,10 @@ public class UserViewController {
     @GetMapping(value = "/user/modify")
     public String modify(){
         return "user/modify";
+    }
+
+    @GetMapping(value = "/user/view")
+    public String view(@AuthenticationPrincipal CustomUserDetails customUserDetails){
+        return "user/view";
     }
 }

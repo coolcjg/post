@@ -1,8 +1,8 @@
 <html lang="en" xmlns:th="http://www.w3.org/1999/html" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
   <nav class="navbar flex-end bg-body-tertiary" sec:authorize="isAnonymous()">
     <div class="me-3">
-      <button class="btn btn-primary" type="submit" th:onclick="|location.href='@{/user/login}'|">로그인</button>
-      <button class="btn btn-success" type="submit" th:onclick="|location.href='@{/user/signup}'|">회원가입</button>
+      <button class="btn btn-primary" type="button" th:onclick="|location.href='@{/user/login}'|">로그인</button>
+      <button class="btn btn-success" type="button" th:onclick="|location.href='@{/user/signup}'|">회원가입</button>
     </div>
   </nav>
 
@@ -17,7 +17,11 @@
     </div>
 
     <div class="me-3">
-      <button class="btn btn-danger" type="submit">로그아웃</button>
+      <button class="btn btn-success" type="button" th:onclick="|location.href='@{/user/view}'|">회원정보</button>
+    </div>
+
+    <div class="me-3">
+      <button class="btn btn-danger" type="button" th:onclick="|location.href='@{/user/logout}'|">로그아웃</button>
     </div>
   </nav>
 </html>
