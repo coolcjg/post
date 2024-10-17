@@ -68,6 +68,9 @@
                 alert('로그아웃이 실패하였습니다.');
               }
             },
+            error: function (data, status, xhr) {
+              alert(data.responseJSON.message);
+            },
           });
         }
       }

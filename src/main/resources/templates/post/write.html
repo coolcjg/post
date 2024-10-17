@@ -88,6 +88,9 @@
                         enableButton();
                     }
                 },
+                error: function (data, status, xhr) {
+                    alert(data.responseJSON.message);
+                },
             });
 
             enableButton();

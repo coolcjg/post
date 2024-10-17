@@ -10,6 +10,7 @@ import com.cjg.post.dto.request.UserSaveRequestDto;
 import com.cjg.post.dto.response.UserLoginResponseDto;
 import com.cjg.post.dto.response.UserResponseDto;
 import com.cjg.post.exception.CustomException;
+import com.cjg.post.repository.PostRepository;
 import com.cjg.post.repository.UserRepository;
 import com.cjg.post.util.AES256;
 import com.cjg.post.util.S3;
@@ -45,6 +46,8 @@ public class UserService {
     private final UserDetailsServiceImpl userDetailsService;
 
     private final AES256 aes256;
+
+    private final PostRepository postRepository;
 
     public Long count(String userId){
         return userRepository.countByUserId(userId);
@@ -133,6 +136,7 @@ public class UserService {
         if(user != null){
             if(passwordEncoder.matches(dto.getPassword(), user.getPassword())){
                 s3.deleteImageToS3(user.getImage().substring(user.getImage().lastIndexOf("/")+1));
+                postRepository.deleteByUserUserId(dto.getUserId());
                 userRepository.deleteByUserId(dto.getUserId());
                 SecurityContextHolder.clearContext();
             }else{

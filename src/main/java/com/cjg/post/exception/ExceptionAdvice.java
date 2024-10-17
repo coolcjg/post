@@ -25,7 +25,7 @@ public class ExceptionAdvice {
     @ExceptionHandler({CustomViewException.class})
     public String exceptionHandler(final CustomViewException e, Model model){
         model.addAttribute("error", e.getMessage());
-        return "error/403";
+        return "error";
     }
 
     //Controller @Valid 유효성 검증

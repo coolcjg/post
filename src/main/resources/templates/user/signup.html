@@ -101,6 +101,9 @@
                         alert('사용 불가능한 아이디입니다.');
                     }
                 },
+                error: function (data, status, xhr) {
+                    alert(data.responseJSON.message);
+                },
             });
         }
 
@@ -157,6 +160,9 @@
                         alert('회원 가입이 실패하였습니다.');
                         $("#submitButton").removeClass("disabled");
                     }
+                },
+                error: function (data, status, xhr) {
+                    alert(data.responseJSON.message);
                 },
             });
 

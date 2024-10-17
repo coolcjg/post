@@ -37,3 +37,7 @@ nav.flex-end{
 .post-search-inner-div{
     width:400px;
 }
+
+.mouse-over{
+    cursor: pointer;
+}

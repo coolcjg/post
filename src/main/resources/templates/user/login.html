@@ -76,15 +76,10 @@
                 success: function (data, status, xhr) {
                     if(data.code === "200"){
                         location.href = "/post/list";
-                    }else{
-                        alert('로그인이 실패하였습니다.');
                     }
                 },
                 error: function (data, status, xhr) {
-                    if(data.responseJSON.code === "404"){
-                        alert('해당 아이디가 없습니다.');
-
-                    }
+                    alert(data.responseJSON.message);
                 },
             });
 

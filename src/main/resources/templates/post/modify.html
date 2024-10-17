@@ -91,6 +91,9 @@
                         alert('게시글 등록이 실패하였습니다.');
                     }
                 },
+                error: function (data, status, xhr) {
+                    alert(data.responseJSON.message);
+                },
             });
 
             enableButton();

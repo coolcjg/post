@@ -95,14 +95,13 @@
                 contentType: false,
                 cache : false,
                 success: function (data, status, xhr) {
-                    console.log(data);
                     if(data.code === "200"){
                         alert('회원정보 수정이 완료되었습니다.');
                         location.href='/user/view';
-                    }else{
-                        alert('회원정보 수정이 실패하였습니다.');
-                        enableButton();
                     }
+                },
+                error: function (data, status, xhr) {
+                    alert(data.responseJSON.message);
                 },
             });
 
@@ -123,8 +122,8 @@
             disableButton();
 
             if(!confirm("탈퇴하시겠습니까?")){
-                return;
                 enableButton();
+                return;
             }
 
             const json = JSON.stringify({
@@ -142,12 +141,14 @@
                     if(data.code === "200"){
                         alert('회원 정보가 삭제되었습니다');
                         location.href = "/post/list";
-                    }else{
-                        alert('탈퇴 처리가 실패하였습니다.');
-                        enableButton();
                     }
                 },
+                error: function (data, status, xhr) {
+                    alert(data.responseJSON.message);
+                },
             });
+
+            enableButton();
 
         }
 

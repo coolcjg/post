@@ -118,7 +118,7 @@ public class PostService {
 
     @Transactional
     public PostResponseDto view(CustomUserDetails customUserDetails, Long postId){
-        Post post = postRepository.findById(postId).orElseThrow(()-> new CustomException(ResultCode.POST_SEARCH_NOT_FOUND));
+        Post post = postRepository.findById(postId).orElseThrow(()-> new CustomViewException(ResultCode.POST_SEARCH_NOT_FOUND));
         if(customUserDetails == null || post.getOpen() == 'Y' || (post.getOpen() == 'N' && auth.isSameUserForUser(customUserDetails, post.getUser().getUserId()))){
             post.setView(post.getView()+1);
             return postToDto(post);
@@ -143,6 +143,11 @@ public class PostService {
     @Transactional
     public void delete(PostDeleteRequestDto dto){
         postRepository.deleteById(dto.getPostId());
+    }
+
+    @Transactional
+    public void deleteByUserUserId(String userId){
+        postRepository.deleteByUserUserId(userId);
     }
 
     public String getQueryParams(PostListRequestDto dto, int pageNumber){
