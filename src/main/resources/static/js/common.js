@@ -15,3 +15,7 @@ function disableButton(){
 function enableButton(){
     $(".submitBtn").removeClass("disabled");
 }
+
+function list(){
+    location.href='/post/list';
+}

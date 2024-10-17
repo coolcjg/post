@@ -33,7 +33,7 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
                         containsTitle(dto.getTitle())
                         ,containsContent(dto.getContent())
                         ,eqUserId(dto.getUserId())
-                        ,eqOpen(dto.getOpen())
+                        ,eqOpen()
                 );
 
         JPAQuery<Long> countQuery = jpaQueryFactory
@@ -43,7 +43,7 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
                         containsTitle(dto.getTitle())
                         ,containsContent(dto.getContent())
                         ,eqUserId(dto.getUserId())
-                        ,eqOpen(dto.getOpen())
+                        ,eqOpen()
                 );
 
         List<Post> list = query.orderBy(post.regDate.desc())
@@ -70,9 +70,8 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
         return post.user.userId.eq(userId);
     }
 
-    private BooleanExpression eqOpen(String open){
-        if(open == null) return null;
-        return post.open.eq(open.charAt(0));
+    private BooleanExpression eqOpen(){
+        return post.open.eq('Y');
     }
 
 }

@@ -3,6 +3,7 @@ package com.cjg.post.controller;
 
 import com.cjg.post.code.ResultCode;
 import com.cjg.post.config.jwt.JwtTokenProvider;
+import com.cjg.post.domain.CustomUserDetails;
 import com.cjg.post.dto.request.UserDeleteRequestDto;
 import com.cjg.post.dto.request.UserLoginRequestDto;
 import com.cjg.post.dto.request.UserSaveRequestDto;
@@ -10,6 +11,7 @@ import com.cjg.post.dto.response.UserLoginResponseDto;
 import com.cjg.post.dto.response.UserResponseDto;
 import com.cjg.post.response.Response;
 import com.cjg.post.service.UserService;
+import com.cjg.post.util.AuthCheck;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -17,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +30,10 @@ public class UserController {
     private final UserService userService;
 
     private final JwtTokenProvider jwtTokenProvider;
+
+    private final AuthCheck auth;
+
+
 
     @GetMapping(value = "/v1/user/{userId}/count")
     public ResponseEntity<Response<Long>> count(@PathVariable("userId") String userId){
@@ -72,8 +79,13 @@ public class UserController {
     }
 
     @PutMapping(value = "/v1/user")
-    public ResponseEntity<Response<UserResponseDto>> modify(@ModelAttribute @Valid UserSaveRequestDto userSaveRequestDto){
-        return ResponseEntity.ok(Response.success(ResultCode.USER_MODIFY_SUCCESS, userService.modify(userSaveRequestDto)));
+    public ResponseEntity<Response<?>> modify(@AuthenticationPrincipal CustomUserDetails customUserDetails, @ModelAttribute @Valid UserSaveRequestDto dto){
+        if(auth.isSameUserForUser(customUserDetails, dto.getUserId())){
+            return ResponseEntity.ok(Response.success(ResultCode.USER_MODIFY_SUCCESS, userService.modify(dto)));
+        }else{
+            return ResponseEntity.ok(Response.success(ResultCode.USER_INVALID_AUTH));
+        }
+
     }
 
     @DeleteMapping(value = "/v1/user")

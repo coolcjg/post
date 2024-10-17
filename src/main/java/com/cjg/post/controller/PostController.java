@@ -9,6 +9,7 @@ import com.cjg.post.dto.request.PostSaveRequestDto;
 import com.cjg.post.dto.response.PostResponseDto;
 import com.cjg.post.response.Response;
 import com.cjg.post.service.PostService;
+import com.cjg.post.util.AuthCheck;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 public class PostController {
 
     private final PostService postService;
+    private final AuthCheck auth;
     
     @PostMapping(value = "/v1/post")
     public ResponseEntity<Response<PostResponseDto>> save(@RequestBody @Valid PostSaveRequestDto dto){
@@ -28,7 +30,7 @@ public class PostController {
 
     @PutMapping(value = "/v1/post")
     public ResponseEntity<Response<?>> modify(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody @Valid PostModifyRequestDto dto){
-        if(postService.isSameUser(customUserDetails, dto.getPostId())){
+        if(auth.isSameUserForPost(customUserDetails, dto.getPostId())){
             return ResponseEntity.ok(Response.success(ResultCode.POST_MODIFY_SUCCESS, postService.modify(dto)));
         }else{
             return ResponseEntity.ok(Response.fail(ResultCode.POST_INVALID_AUTH));
@@ -37,7 +39,7 @@ public class PostController {
 
     @DeleteMapping(value = "/v1/post")
     public ResponseEntity<Response<Void>> delete(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody @Valid PostDeleteRequestDto dto){
-        if(postService.isSameUser(customUserDetails, dto.getPostId())){
+        if(auth.isSameUserForPost(customUserDetails, dto.getPostId())){
             postService.delete(dto);
             return ResponseEntity.ok(Response.success(ResultCode.POST_DELETE_SUCCESS));
         }else{

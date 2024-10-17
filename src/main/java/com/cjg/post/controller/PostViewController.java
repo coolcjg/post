@@ -3,6 +3,7 @@ package com.cjg.post.controller;
 import com.cjg.post.domain.CustomUserDetails;
 import com.cjg.post.dto.request.PostListRequestDto;
 import com.cjg.post.service.PostService;
+import com.cjg.post.util.AuthCheck;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,6 +20,7 @@ import org.springframework.web.servlet.view.RedirectView;
 public class PostViewController {
 
     private final PostService postService;
+    private final AuthCheck authCheck;
 
     @GetMapping(value = "/")
     public RedirectView home(){
@@ -58,7 +60,7 @@ public class PostViewController {
 
     @GetMapping(value = "/post/{postId}/modify")
     public String modify(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long postId, Model model){
-        if(postService.isSameUser(customUserDetails, postId)){
+        if(authCheck.isSameUserForPost(customUserDetails, postId)){
             model.addAttribute("data", postService.view(postId));
         }else{
             log.error("권한없음");

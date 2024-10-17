@@ -162,17 +162,6 @@ public class PostService {
 
     };
 
-    public boolean isSameUser(CustomUserDetails customUserDetails, Long postId){
-        boolean result = false;
-        Post post = postRepository.findById(postId).orElseThrow(()-> new CustomException(ResultCode.USER_SEARCH_NOT_FOUND));
-
-        if(customUserDetails != null && customUserDetails.getUsername().equals(post.getUser().getUserId())){
-            result = true;
-        }
-        return result;
-    }
-
-
     public PostResponseDto postToDto(Post post){
         return PostResponseDto.builder()
                 .postId(post.getPostId())
