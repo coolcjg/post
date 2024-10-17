@@ -85,7 +85,7 @@ public class PostService {
         log.info("---------------");
 
         return PostListResponseDto.builder()
-                .postList(list)
+                .list(list)
                 .pageList(pagination)
                 .queryParams(getQueryParams(dto))
                 .pageNumber(page.getPageable().getPageNumber()+1)

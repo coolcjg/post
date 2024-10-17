@@ -22,23 +22,11 @@
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <th scope="row">가가(2)</th>
-                <td>Mark</td>
-                <td>2024-11-10</td>
-                <td>1</td>
-            </tr>
-            <tr>
-                <th scope="row">나나(1)</th>
-                <td>Jacob</td>
-                <td>2024-11-09</td>
-                <td>2</td>
-            </tr>
-            <tr>
-                <th scope="row">다다</th>
-                <td>Larry the Bird</td>
-                <td>2024-11-08</td>
-                <td>3</td>
+            <tr th:each="obj : ${data.list}">
+                <th scope="row" th:text="${obj.title}"></th>
+                <td th:text="${obj.userId}"></td>
+                <td th:text="${obj.regDate}"></td>
+                <td th:text="${obj.view}"></td>
             </tr>
             </tbody>
         </table>
@@ -47,19 +35,29 @@
     <div class="d-flex justify-content-center">
         <nav aria-label="Page navigation example">
             <ul class="pagination">
-                <li class="page-item">
-                    <a class="page-link" href="#" aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
-                    </a>
-                </li>
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item">
-                    <a class="page-link" href="#" aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
-                    </a>
-                </li>
+
+                <th:block th:if="${data.pageNumber != 1}">
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                </th:block>
+
+                <!--
+                queryParam을 인코딩 하지 않고 그냥 사용하려면 '|'를 양 끝에 추가한다.
+                -->
+                <th:block th:each="obj : ${data.pageList}">
+                    <li class="page-item"><a class="page-link" th:href="@{|/post/list?${data.queryParams}|}" th:text="${obj}"></a></li>
+                </th:block>
+
+                <th:block th:if="${data.pageNumber != data.totalPage}">
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </th:block>
             </ul>
         </nav>
 
@@ -69,6 +67,7 @@
         <div class="input-group mb-3 post-search-inner-div">
             <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Dropdown</button>
             <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#">Action</a></li>
                 <li><a class="dropdown-item" href="#">Action</a></li>
                 <li><a class="dropdown-item" href="#">Another action</a></li>
                 <li><a class="dropdown-item" href="#">Something else here</a></li>

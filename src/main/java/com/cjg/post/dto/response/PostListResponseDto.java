@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 @ToString
 public class PostListResponseDto {
-    List<PostResponseDto> postList;
+    List<PostResponseDto> list;
     int pageNumber;
     int totalPage;
     Long totalCount;
