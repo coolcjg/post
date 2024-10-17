@@ -11,8 +11,10 @@ import com.cjg.post.dto.response.PageItem;
 import com.cjg.post.dto.response.PostListResponseDto;
 import com.cjg.post.dto.response.PostResponseDto;
 import com.cjg.post.exception.CustomException;
+import com.cjg.post.exception.CustomViewException;
 import com.cjg.post.repository.PostRepository;
 import com.cjg.post.util.AES256;
+import com.cjg.post.util.AuthCheck;
 import com.cjg.post.util.DateToString;
 import com.cjg.post.util.PageUtil;
 import jakarta.transaction.Transactional;
@@ -37,6 +39,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final DateToString dateToString;
     private final AES256 aes256;
+    private final AuthCheck auth;
 
     public PostResponseDto save(PostSaveRequestDto dto){
 
@@ -114,12 +117,14 @@ public class PostService {
     }
 
     @Transactional
-    public PostResponseDto view(Long postId){
-
+    public PostResponseDto view(CustomUserDetails customUserDetails, Long postId){
         Post post = postRepository.findById(postId).orElseThrow(()-> new CustomException(ResultCode.POST_SEARCH_NOT_FOUND));
-        post.setView(post.getView()+1);
-
-        return postToDto(post);
+        if(customUserDetails == null || post.getOpen() == 'Y' || (post.getOpen() == 'N' && auth.isSameUserForUser(customUserDetails, post.getUser().getUserId()))){
+            post.setView(post.getView()+1);
+            return postToDto(post);
+        }else{
+            throw new CustomViewException(ResultCode.POST_INVALID_AUTH);
+        }
     }
 
 

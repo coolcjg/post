@@ -5,6 +5,7 @@ import com.cjg.post.code.ResultCode;
 import com.cjg.post.response.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,6 +19,13 @@ public class ExceptionAdvice {
     public ResponseEntity<Response> exceptionHandler(final CustomException e){
         return ResponseEntity.status(Integer.parseInt(e.getResultCode().getCode()))
                 .body(Response.fail(e.getResultCode()));
+    }
+
+    //VIEW용 에러 처리
+    @ExceptionHandler({CustomViewException.class})
+    public String exceptionHandler(final CustomViewException e, Model model){
+        model.addAttribute("error", e.getMessage());
+        return "error/403";
     }
 
     //Controller @Valid 유효성 검증

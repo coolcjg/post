@@ -1,7 +1,9 @@
 package com.cjg.post.controller;
 
+import com.cjg.post.code.ResultCode;
 import com.cjg.post.domain.CustomUserDetails;
 import com.cjg.post.dto.request.PostListRequestDto;
+import com.cjg.post.exception.CustomViewException;
 import com.cjg.post.service.PostService;
 import com.cjg.post.util.AuthCheck;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +51,7 @@ public class PostViewController {
 
     @GetMapping(value = "/post/{postId}")
     public String view(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long postId, Model model){
-        model.addAttribute("data", postService.view(postId));
+        model.addAttribute("data", postService.view(customUserDetails, postId));
         return "post/view";
     }
 
@@ -61,9 +63,9 @@ public class PostViewController {
     @GetMapping(value = "/post/{postId}/modify")
     public String modify(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long postId, Model model){
         if(authCheck.isSameUserForPost(customUserDetails, postId)){
-            model.addAttribute("data", postService.view(postId));
+            model.addAttribute("data", postService.view(null, postId));
         }else{
-            log.error("권한없음");
+            throw new CustomViewException(ResultCode.POST_INVALID_AUTH);
         }
         return "post/modify";
     }
