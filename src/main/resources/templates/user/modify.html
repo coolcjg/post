@@ -43,8 +43,8 @@
             </div>
 
         </form>
-        <button id="modifyButton" class="btn btn-success" th:onclick="|userModify()|">수정</button>
-        <button id="deleteButton" class="btn btn-danger mt-2" th:onclick="|userDelete()|">탈퇴</button>
+        <button class="btn btn-success submitBtn" th:onclick="|userModify()|">수정</button>
+        <button class="btn btn-danger mt-2 submitBtn" th:onclick="|userDelete()|">탈퇴</button>
     </div>
 
     <th:block th:replace="~{/common/bottom}"></th:block>
@@ -57,19 +57,9 @@
     <script>
         /*<![CDATA[*/
 
-        function disableButton(){
-            $("#modifyButton").addClass("disabled");
-            $("#deleteButton").addClass("disabled");
-        }
-
-        function enableButton(){
-            $("#modifyButton").removeClass("disabled");
-            $("#deleteButton").removeClass("disabled");
-        }
-
         function userModify(){
 
-            if(!validName()){
+            if(!checkBlank("name")){
                 alert('이름을 입력해주세요');
                 return;
             }

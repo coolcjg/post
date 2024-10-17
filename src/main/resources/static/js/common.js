@@ -7,3 +7,11 @@ function checkLength(el, maxLength){
 function checkBlank(elementId){
     return $("#" + elementId).val().trim().length !== 0;
 }
+
+function disableButton(){
+    $(".submitBtn").addClass("disabled");
+}
+
+function enableButton(){
+    $(".submitBtn").removeClass("disabled");
+}

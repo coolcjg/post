@@ -34,6 +34,9 @@ public enum ResultCode {
     POST_DELETE_SUCCESS(HttpStatus.OK, "게시글 삭제 성공"),
 
     POST_SEARCH_NOT_FOUND(HttpStatus.NOT_FOUND, "게시글이 없습니다"),
+    POST_INVALID_TITLE(HttpStatus.BAD_REQUEST, "제목이 적합하지 않습니다."),
+    POST_INVALID_CONTENT(HttpStatus.BAD_REQUEST, "내용이 적합하지 않습니다."),
+    POST_INVALID_OPEN(HttpStatus.BAD_REQUEST, "공개여부가 적합하지 않습니다."),
     POST_INVALID_HIDDEN(HttpStatus.BAD_REQUEST, "노출여부가 적합하지 않습니다."),
     POST_INVALID_PAGE_SIZE(HttpStatus.BAD_REQUEST, "페이지 사이즈가 적합하지 않습니다"),
     POST_INVALID_PAGE_NUMBER(HttpStatus.BAD_REQUEST, "페이지 번호가 적합하지 않습니다"),
@@ -49,7 +52,10 @@ public enum ResultCode {
 
     REDIS_CONNECTION(HttpStatus.BAD_REQUEST, "레디스 연결 에러"),
 
-    AES_FAIL(HttpStatus.BAD_REQUEST, "AES암호화 에러");
+    AES_FAIL(HttpStatus.BAD_REQUEST, "AES암호화 에러"),
+
+    PAGE_INVALID_SIZE(HttpStatus.BAD_REQUEST, "페이지 사이즈가 적합하지 않습니다"),
+    PAGE_INVALID_NUMBER(HttpStatus.BAD_REQUEST, "페이지 번호가 적합하지 않습니다");
 
     private final HttpStatus httpStatus;
     private final String message;

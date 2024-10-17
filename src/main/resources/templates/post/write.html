@@ -38,8 +38,8 @@
             </div>
 
             <div class="d-flex justify-content-center">
-                <button class="btn btn-success" type="submit" th:onclick="insert()">등록</button>
-                <button class="btn btn-danger ms-1" type="submit">취소</button>
+                <button class="btn btn-success submitBtn" type="submit" th:onclick="insert()">등록</button>
+                <button class="btn btn-danger ms-1 submitBtn" type="submit">취소</button>
             </div>
 
 
@@ -64,14 +64,14 @@
                 return;
             }
 
+            disableButton();
+
             const json = JSON.stringify({
                 userId : '[[${#authentication.name}]]'
                 , title : $("#title").val()
                 , content : $("#content").val()
                 , open : $("#open").val()
             })
-
-            console.log(json);
 
             $.ajax({
                 url: "/v1/post",
@@ -80,17 +80,17 @@
                 contentType: 'application/json; charset=utf-8',
                 data : json,
                 success: function (data, status, xhr) {
-                    console.log(data);
-                    /*
                     if(data.code === "201"){
-                        location.href = "/post/list";
+                        alert('게시글 등록 성공')
+                        location.href = "/post/view/" + data.data.postId;
                     }else{
-                        alert('로그인이 실패하였습니다.');
-                        $("#submitButton").removeClass("disabled");
+                        alert('게시글 등록이 실패하였습니다.');
+                        enableButton();
                     }
-                     */
                 },
             });
+
+            enableButton();
         }
 
         /*]]>*/

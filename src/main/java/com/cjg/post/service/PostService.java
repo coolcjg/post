@@ -1,15 +1,27 @@
 package com.cjg.post.service;
 
 import com.cjg.post.domain.Post;
+import com.cjg.post.dto.request.PostListRequestDto;
 import com.cjg.post.dto.request.PostSaveRequestDto;
+import com.cjg.post.dto.response.PostListResponseDto;
 import com.cjg.post.dto.response.PostResponseDto;
 import com.cjg.post.repository.PostRepository;
 import com.cjg.post.util.DateToString;
+import com.cjg.post.util.PageUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class PostService {
 
     private final UserService userService;
@@ -38,6 +50,79 @@ public class PostService {
                 .regDate(dateToString.apply(result.getRegDate()))
                 .modDate(dateToString.apply(result.getModDate()))
                 .build();
+    }
+
+    public PostListResponseDto list(PostListRequestDto dto){
+        Pageable pageable = PageRequest.of(dto.getPageNumber()-1, dto.getPageSize(), Sort.Direction.DESC, "regDate");
+        Page<Post> page =  postRepository.list(pageable, dto);
+
+        List<PostResponseDto> list = new ArrayList<>();
+        for(Post post : page.getContent()) {
+            PostResponseDto temp = PostResponseDto.builder()
+                    .postId(post.getPostId())
+                    .userId(post.getUser().getUserId())
+                    .title(post.getTitle())
+                    .content(post.getContent())
+                    .open(post.getOpen())
+                    .view(post.getView())
+                    .regDate(dateToString.apply(post.getRegDate()))
+                    .modDate(dateToString.apply(post.getModDate()))
+                    .build();
+            list.add(temp);
+        }
+
+        int totalPage = page.getTotalPages() == 0 ? 1 : page.getTotalPages();
+
+        List<Integer> pagination = PageUtil.getStartEndPage(dto.getPageNumber(), totalPage);
+
+        log.info("---------------");
+        log.info("list : " + list);
+        log.info("pagination : " + pagination);
+        log.info("getQueryParams : " + getQueryParams(dto));
+        log.info("pageNumber : " + (page.getPageable().getPageNumber()+1));
+        log.info("totalPage : " + totalPage);
+        log.info("totalCount : " + page.getTotalElements());
+        log.info("---------------");
+
+        return PostListResponseDto.builder()
+                .postList(list)
+                .pageList(pagination)
+                .queryParams(getQueryParams(dto))
+                .pageNumber(page.getPageable().getPageNumber()+1)
+                .totalPage(totalPage)
+                .totalCount(page.getTotalElements())
+                .build();
+    }
+
+
+    public String getQueryParams(PostListRequestDto dto){
+
+        StringBuilder sb = new StringBuilder();
+
+        if(dto.getUserId() != null){
+            sb.append("userId=").append(dto.getUserId()).append("&");
+        }
+
+        if(dto.getTitle() != null){
+            sb.append("title=").append(dto.getTitle()).append("&");
+        }
+
+        if(dto.getContent() != null){
+            sb.append("content=").append(dto.getContent()).append("&");
+        }
+
+        if(dto.getOpen() != null){
+            sb.append("open=").append(dto.getOpen()).append("&");
+        }
+
+        sb.append("pageNumber=").append(dto.getPageNumber()).append("&");
+        sb.append("pageSize=").append(dto.getPageSize()).append("&");
+
+        if(sb.lastIndexOf("&") == sb.length()-1){
+            sb.delete(sb.length()-1, sb.length());
+        }
+
+        return sb.toString();
     }
 
 
