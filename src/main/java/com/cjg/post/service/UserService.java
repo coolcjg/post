@@ -142,4 +142,8 @@ public class UserService {
             throw new CustomException(ResultCode.USER_SEARCH_NOT_FOUND);
         }
     }
+
+    public User findByUserId(String userId){
+        return userRepository.findByUserId(userId);
+    }
 }

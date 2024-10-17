@@ -80,8 +80,8 @@
         </div>
 
 
-        <div class="mx-2">
-            <button class="btn btn-success" type="submit">글쓰기</button>
+        <div class="mx-2" sec:authorize="isAuthenticated()">
+            <button class="btn btn-success" type="button" th:onclick="location.href='/post/write'">글쓰기</button>
         </div>
     </div>
 

@@ -33,7 +33,6 @@ public class User {
 	private String image;
 
 	@Column(nullable = false, length=10)
-	@ColumnDefault("'ROLE_USER'")
 	private String auth;
 
 	@CreationTimestamp
