@@ -11,7 +11,6 @@ import lombok.ToString;
 @ToString
 public class CommentSaveRequestDto {
 
-    @NotNull(message="상위 댓글 아이디를 입력해주세요")
     private Long parentId;
 
     @NotNull(message="게시글 아이디를 입력해주세요")

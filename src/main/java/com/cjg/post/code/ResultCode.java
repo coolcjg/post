@@ -59,7 +59,13 @@ public enum ResultCode {
     AES_FAIL(HttpStatus.BAD_REQUEST, "AES암호화 에러"),
 
     PAGE_INVALID_SIZE(HttpStatus.BAD_REQUEST, "페이지 사이즈가 적합하지 않습니다"),
-    PAGE_INVALID_NUMBER(HttpStatus.BAD_REQUEST, "페이지 번호가 적합하지 않습니다");
+    PAGE_INVALID_NUMBER(HttpStatus.BAD_REQUEST, "페이지 번호가 적합하지 않습니다"),
+
+    COMMENT_SAVE_SUCCESS(HttpStatus.CREATED, "댓글 저장 성공"),
+    COMMENT_MODIFY_SUCCESS(HttpStatus.OK, "댓글 수정 성공"),
+    COMMENT_DELETE_SUCCESS(HttpStatus.OK, "댓글 삭제 성공"),
+
+    COMMENT_SEARCH_NOT_FOUND(HttpStatus.NOT_FOUND, "댓글 조회 실패");
 
     private final HttpStatus httpStatus;
     private final String message;
