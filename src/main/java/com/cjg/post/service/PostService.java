@@ -142,6 +142,7 @@ public class PostService {
     public String getQueryParams(PostListRequestDto dto, int pageNumber){
 
         StringBuilder sb = new StringBuilder();
+        sb.append("/post/list?");
 
         if(dto.getSearchType() != null){
             sb.append("searchType=").append(dto.getSearchType()).append("&");

@@ -48,7 +48,7 @@
                 queryParam을 인코딩 하지 않고 그냥 사용하려면 '|'를 양 끝에 추가한다.
                 -->
                 <th:block th:each="obj : ${data.pageList}">
-                    <li class="page-item"><a class="page-link" th:href="@{|/post/list?${obj.pageUrl}|}" th:text="${obj.pageNumber}"></a></li>
+                    <li class="page-item" th:classappend="${obj.pageNumber == data.pageNumber} ? 'active' : ''"><a class="page-link" th:href="${obj.pageUrl}" th:text="${obj.pageNumber}"></a></li>
                 </th:block>
 
                 <th:block th:if="${data.nextPage != ''}">
