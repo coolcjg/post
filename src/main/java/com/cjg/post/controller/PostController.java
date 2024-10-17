@@ -3,6 +3,7 @@ package com.cjg.post.controller;
 
 import com.cjg.post.code.ResultCode;
 import com.cjg.post.domain.CustomUserDetails;
+import com.cjg.post.dto.request.PostDeleteRequestDto;
 import com.cjg.post.dto.request.PostModifyRequestDto;
 import com.cjg.post.dto.request.PostSaveRequestDto;
 import com.cjg.post.dto.response.PostResponseDto;
@@ -34,6 +35,16 @@ public class PostController {
         }
     }
 
+    @DeleteMapping(value = "/v1/post")
+    public ResponseEntity<Response<Void>> delete(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody @Valid PostDeleteRequestDto dto){
+        if(postService.isSameUser(customUserDetails, dto.getPostId())){
+            postService.delete(dto);
+            return ResponseEntity.ok(Response.success(ResultCode.POST_DELETE_SUCCESS));
+        }else{
+            return ResponseEntity.ok(Response.fail(ResultCode.POST_INVALID_AUTH));
+        }
+    }
+
     /*
     @PostMapping(value = "/v1/post/login")
     public ResponseEntity<Response<PostLoginResponseDto>> login(@RequestBody @Valid PostLoginRequestDto postLoginRequestDto){
@@ -60,16 +71,6 @@ public class PostController {
                 .header(HttpHeaders.SET_COOKIE, responseCookie2.toString())
                 .body(Response.success(ResultCode.POST_LOGIN_SUCCESS, postLoginResponseDto));
     }
-
-
-
-    @DeleteMapping(value = "/v1/post")
-    public ResponseEntity<Response<Void>> delete(HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid PostDeleteRequestDto dto){
-        postService.delete(dto);
-        jwtTokenProvider.removeTokenFromCookie(request, response);
-        return ResponseEntity.ok(Response.success(ResultCode.POST_DELETE_SUCCESS));
-    }
-
      */
 
 }

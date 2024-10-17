@@ -86,26 +86,60 @@
 
             <div class="d-flex justify-content-end">
                 <th:block th:if="${#authentication.name} == ${data.userId}">
-                    <button class="btn btn-success ms-1" type="button" th:onclick="|modify('${data.postId}')|">수정</button>
-                    <button class="btn btn-danger ms-1" type="button" th:onclick="|delete('${data.postId}')|">삭제</button>
+                    <button class="btn btn-success ms-1 submitBtn" type="button" th:onclick="|modify('${data.postId}')|">수정</button>
+                    <button class="btn btn-danger ms-1 submitBtn" type="button" th:onclick="deletePost()">삭제</button>
                 </th:block>
-                <button class="btn btn-primary ms-1" type="button" th:onclick="|list()|">리스트</button>
+                <button class="btn btn-primary ms-1" type="button" th:onclick="list()">리스트</button>
             </div>
 
         </div>
 
     </div>
 
+    <th:block th:replace="~{/common/bottom}"></th:block>
     <script src="/js/common.js"></script>
 
     <script>
+        /*<![CDATA[*/
 
         function modify(postId){
             location.href='/post/' + postId + "/modify";
         }
 
+        function deletePost(){
+
+            if(!confirm('삭제하시겠습니까?')){
+                return;
+            }
+
+            disableButton();
+
+            const json = JSON.stringify({
+                postId : `[[${data.postId}]]`
+            });
+
+            $.ajax({
+                url: "/v1/post",
+                type: "DELETE",
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                data : json,
+                success: function (data, status, xhr) {
+                    if(data.code === "200"){
+                        alert('게시글 삭제 성공')
+                        location.href = "/post/list"
+                    }else{
+                        alert('게시글 삭제가 실패하였습니다.');
+                    }
+                },
+            });
+
+            enableButton();
+        }
 
 
+
+        /*]]>*/
     </script>
 
 </body>

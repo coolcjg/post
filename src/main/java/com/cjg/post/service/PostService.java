@@ -3,6 +3,7 @@ package com.cjg.post.service;
 import com.cjg.post.code.ResultCode;
 import com.cjg.post.domain.CustomUserDetails;
 import com.cjg.post.domain.Post;
+import com.cjg.post.dto.request.PostDeleteRequestDto;
 import com.cjg.post.dto.request.PostListRequestDto;
 import com.cjg.post.dto.request.PostModifyRequestDto;
 import com.cjg.post.dto.request.PostSaveRequestDto;
@@ -133,6 +134,11 @@ public class PostService {
         return postToDto(post);
     }
 
+    @Transactional
+    public void delete(PostDeleteRequestDto dto){
+        postRepository.deleteById(dto.getPostId());
+    }
+
     public String getQueryParams(PostListRequestDto dto, int pageNumber){
 
         StringBuilder sb = new StringBuilder();
@@ -181,63 +187,5 @@ public class PostService {
                 .modDate(dateToString.apply(post.getModDate()))
                 .build();
     }
-
-    /*
-    public PostLoginResponseDto login(PostLoginRequestDto requestDto){
-
-        Post user = userRepository.findByPostId(requestDto.getPostId());
-
-        if(user == null){
-            throw new CustomException(ResultCode.USER_SEARCH_NOT_FOUND);
-        }else{
-
-            if(passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
-
-                Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
-                grantedAuthorities.add(new SimpleGrantedAuthority(PostRole.USER.getValue()));
-
-                PostDetails userDetails = userDetailsService.loadPostByPostname(requestDto.getPostId());
-
-                PostnamePasswordAuthenticationToken token = new PostnamePasswordAuthenticationToken(userDetails, requestDto.getPassword(), grantedAuthorities);
-                Authentication authentication = authenticationManager.authenticate(token);
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-                String accessToken = jwt.createAccessToken(authentication);
-                String refreshToken = jwt.createRefreshToken(authentication);
-
-                return PostLoginResponseDto.builder()
-                                .userId(user.getPostId())
-                                .name(user.getName())
-                                .accessToken(accessToken)
-                                .refreshToken(refreshToken)
-                                .build();
-
-            }else {
-                throw new CustomException(ResultCode.USER_INVALID_PASSWORD);
-            }
-
-        }
-    }
-
-
-
-
-    @Transactional
-    public void delete(PostDeleteRequestDto dto){
-        Post user = userRepository.findByPostId(dto.getPostId());
-
-        if(user != null){
-            if(passwordEncoder.matches(dto.getPassword(), user.getPassword())){
-                s3.deleteImageToS3(user.getImage().substring(user.getImage().lastIndexOf("/")+1));
-                userRepository.deleteByPostId(dto.getPostId());
-                SecurityContextHolder.clearContext();
-            }else{
-                throw new CustomException(ResultCode.USER_INVALID_PASSWORD);
-            }
-        }else{
-            throw new CustomException(ResultCode.USER_SEARCH_NOT_FOUND);
-        }
-    }
-
-     */
 }
 
