@@ -82,7 +82,7 @@
                 success: function (data, status, xhr) {
                     if(data.code === "201"){
                         alert('게시글 등록 성공')
-                        location.href = "/post/view/" + data.data.postId;
+                        location.href = "/post/" + data.data.postId;
                     }else{
                         alert('게시글 등록이 실패하였습니다.');
                         enableButton();

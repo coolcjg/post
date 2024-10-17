@@ -113,6 +113,7 @@ public class PostService {
                 .build();
     }
 
+    @Transactional
     public PostResponseDto view(Long postId){
 
         Post post = postRepository.findById(postId).orElseThrow(()-> new CustomException(ResultCode.POST_SEARCH_NOT_FOUND));
