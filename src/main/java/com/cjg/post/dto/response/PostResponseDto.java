@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Builder
@@ -21,4 +23,6 @@ public class PostResponseDto {
     private int view;
     private String regDate;
     private String modDate;
+
+    private List<CommentResponseDto> commentResponseDtoList;
 }

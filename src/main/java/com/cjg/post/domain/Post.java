@@ -2,11 +2,13 @@ package com.cjg.post.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -45,4 +47,8 @@ public class Post {
 	private LocalDateTime regDate;
 
 	private LocalDateTime modDate;
+
+	@OneToMany(mappedBy="post", orphanRemoval = true)
+	@BatchSize(size=10)
+	private List<Comment> commentList;
 }

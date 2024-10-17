@@ -1,12 +1,14 @@
 package com.cjg.post.service;
 
 import com.cjg.post.code.ResultCode;
+import com.cjg.post.domain.Comment;
 import com.cjg.post.domain.CustomUserDetails;
 import com.cjg.post.domain.Post;
 import com.cjg.post.dto.request.PostDeleteRequestDto;
 import com.cjg.post.dto.request.PostListRequestDto;
 import com.cjg.post.dto.request.PostModifyRequestDto;
 import com.cjg.post.dto.request.PostSaveRequestDto;
+import com.cjg.post.dto.response.CommentResponseDto;
 import com.cjg.post.dto.response.PageItem;
 import com.cjg.post.dto.response.PostListResponseDto;
 import com.cjg.post.dto.response.PostResponseDto;
@@ -184,9 +186,21 @@ public class PostService {
                 .content(post.getContent())
                 .open(post.getOpen())
                 .view(post.getView())
+                .commentResponseDtoList(commentListToDto(post.getCommentList()))
                 .regDate(dateToString.apply(post.getRegDate()))
                 .modDate(dateToString.apply(post.getModDate()))
                 .build();
+    }
+
+    public List<CommentResponseDto> commentListToDto(List<Comment> commentList){
+        return commentList.stream().map(e->CommentResponseDto.builder()
+                .commentId(e.getCommentId())
+                .parentId(e.getComment().getCommentId())
+                .postId(e.getPost().getPostId())
+                .userId(e.getUser().getUserId())
+                .content(e.getContent())
+                .regDate(dateToString.apply(e.getRegDate()))
+                .build()).toList();
     }
 }
 
