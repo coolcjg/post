@@ -15,6 +15,7 @@ public enum ResultCode {
     USER_MODIFY_SUCCESS(HttpStatus.OK, "사용자 수정 성공"),
     USER_DELETE_SUCCESS(HttpStatus.OK, "사용자 삭제 성공"),
     USER_LOGIN_SUCCESS(HttpStatus.OK, "로그인 성공"),
+    USER_LOGOUT_SUCCESS(HttpStatus.OK, "로그아웃 성공"),
 
     USER_SEARCH_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자가 없습니다"),
     USER_INVALID_USERID(HttpStatus.BAD_REQUEST, "아이디가 적합하지 않습니다."),

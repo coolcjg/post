@@ -44,12 +44,32 @@
           </div>
 
           <div class="me-3">
-            <button class="btn btn-danger" type="button" th:onclick="|location.href='@{/user/logout}'|">로그아웃</button>
+            <button class="btn btn-danger" type="button" th:onclick="logout()">로그아웃</button>
           </div>
         </div>
 
       </div>
     </div>
   </nav>
+
+  <script>
+    function logout(){
+      if(confirm('로그아웃하시겠습니까?')){
+        $.ajax({
+          url: "/v1/user/logout",
+          type: "GET",
+          success: function (data, status, xhr) {
+            console.log(data);
+            if(data.code === "200"){
+              location.href='/post/list'
+            }else{
+              alert('로그아웃이 실패하였습니다.');
+            }
+          },
+        });
+      }
+    }
+
+  </script>
 
 </html>

@@ -12,13 +12,15 @@ import java.util.List;
 @Builder
 @ToString
 public class PostListResponseDto {
-    List<PostResponseDto> list;
-    int pageNumber;
-    int totalPage;
-    Long totalCount;
-    String nextPage;
-    String prevPage;
+    private List<PostResponseDto> list;
+    private int totalPage;
+    private Long totalCount;
 
-    List<Integer> pageList;
-    String queryParams;
+    private int pageNumber;
+    private String nextPage;
+    private String prevPage;
+    private List<PageItem> pageList;
+
+    private String searchType;
+    private String searchText;
 }

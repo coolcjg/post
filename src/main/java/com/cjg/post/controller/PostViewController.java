@@ -25,18 +25,14 @@ public class PostViewController {
 
     @GetMapping(value = "/post/list")
     public String list(@AuthenticationPrincipal CustomUserDetails customUserDetails, Model model
-            ,@RequestParam(required = false) String userId
-            ,@RequestParam(required = false) String title
-            ,@RequestParam(required = false) String content
-            ,@RequestParam(required = false) String open
+            ,@RequestParam(required = false) String searchType
+            ,@RequestParam(required = false) String searchText
             ,@RequestParam(required = false, defaultValue = "1") Integer pageNumber
             ,@RequestParam(required = false, defaultValue = "10") Integer pageSize){
 
         PostListRequestDto dto = PostListRequestDto.builder()
-                .userId(userId)
-                .title(title)
-                .content(content)
-                .open(open)
+                .searchType(searchType)
+                .searchText(searchText)
                 .pageNumber(pageNumber)
                 .pageSize(pageSize)
                 .build();

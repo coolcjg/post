@@ -3,6 +3,7 @@ package com.cjg.post.service;
 import com.cjg.post.domain.Post;
 import com.cjg.post.dto.request.PostListRequestDto;
 import com.cjg.post.dto.request.PostSaveRequestDto;
+import com.cjg.post.dto.response.PageItem;
 import com.cjg.post.dto.response.PostListResponseDto;
 import com.cjg.post.dto.response.PostResponseDto;
 import com.cjg.post.repository.PostRepository;
@@ -73,12 +74,18 @@ public class PostService {
 
         int totalPage = page.getTotalPages() == 0 ? 1 : page.getTotalPages();
 
+        String prevPage = dto.getPageNumber() > 1 ? getQueryParams(dto, dto.getPageNumber()-1) : "";
+        String nextPage = dto.getPageNumber() < totalPage ? getQueryParams(dto, dto.getPageNumber()+1) : "";
+
         List<Integer> pagination = PageUtil.getStartEndPage(dto.getPageNumber(), totalPage);
+        List<PageItem> pageItemList = pagination.stream().map(pageNumber-> new PageItem(pageNumber, getQueryParams(dto, pageNumber))).toList();
 
         log.info("---------------");
         log.info("list : " + list);
         log.info("pagination : " + pagination);
-        log.info("getQueryParams : " + getQueryParams(dto));
+        log.info("prevPage : " + prevPage);
+        log.info("nextPage : " + nextPage);
+        log.info("pageItemList : " + pageItemList);
         log.info("pageNumber : " + (page.getPageable().getPageNumber()+1));
         log.info("totalPage : " + totalPage);
         log.info("totalCount : " + page.getTotalElements());
@@ -86,36 +93,30 @@ public class PostService {
 
         return PostListResponseDto.builder()
                 .list(list)
-                .pageList(pagination)
-                .queryParams(getQueryParams(dto))
+                .pageList(pageItemList)
+                .prevPage(prevPage)
+                .nextPage(nextPage)
                 .pageNumber(page.getPageable().getPageNumber()+1)
                 .totalPage(totalPage)
                 .totalCount(page.getTotalElements())
+                .searchType(dto.getSearchType())
+                .searchText(dto.getSearchText())
                 .build();
     }
 
-
-    public String getQueryParams(PostListRequestDto dto){
+    public String getQueryParams(PostListRequestDto dto, int pageNumber){
 
         StringBuilder sb = new StringBuilder();
 
-        if(dto.getUserId() != null){
-            sb.append("userId=").append(dto.getUserId()).append("&");
+        if(dto.getSearchType() != null){
+            sb.append("searchType=").append(dto.getSearchType()).append("&");
         }
 
-        if(dto.getTitle() != null){
-            sb.append("title=").append(dto.getTitle()).append("&");
+        if(dto.getSearchText() != null){
+            sb.append("searchText=").append(dto.getSearchText()).append("&");
         }
 
-        if(dto.getContent() != null){
-            sb.append("content=").append(dto.getContent()).append("&");
-        }
-
-        if(dto.getOpen() != null){
-            sb.append("open=").append(dto.getOpen()).append("&");
-        }
-
-        sb.append("pageNumber=").append(dto.getPageNumber()).append("&");
+        sb.append("pageNumber=").append(pageNumber).append("&");
         sb.append("pageSize=").append(dto.getPageSize()).append("&");
 
         if(sb.lastIndexOf("&") == sb.length()-1){
@@ -123,8 +124,8 @@ public class PostService {
         }
 
         return sb.toString();
-    }
 
+    };
 
     /*
     public PostLoginResponseDto login(PostLoginRequestDto requestDto){

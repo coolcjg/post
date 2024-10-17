@@ -21,7 +21,19 @@ public class PostListRequestDto {
     private Integer pageNumber;
     private Integer pageSize;
 
+    private String searchType;
+    private String searchText;
+
     public void checkParam(){
+
+        if(searchText != null){
+            switch (searchType) {
+                case "title" -> title = searchText;
+                case "content" -> content = searchText;
+                case "userId" -> userId = searchText;
+            }
+        }
+
         if(title != null && title.isBlank()){
             throw new CustomException(ResultCode.POST_INVALID_TITLE);
         }

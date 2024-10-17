@@ -36,9 +36,9 @@
         <nav aria-label="Page navigation example">
             <ul class="pagination">
 
-                <th:block th:if="${data.pageNumber != 1}">
+                <th:block th:if="${data.prevPage != ''}">
                     <li class="page-item">
-                        <a class="page-link" href="#" aria-label="Previous">
+                        <a class="page-link" th:href="${data.prevPage}" aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                         </a>
                     </li>
@@ -48,12 +48,12 @@
                 queryParam을 인코딩 하지 않고 그냥 사용하려면 '|'를 양 끝에 추가한다.
                 -->
                 <th:block th:each="obj : ${data.pageList}">
-                    <li class="page-item"><a class="page-link" th:href="@{|/post/list?${data.queryParams}|}" th:text="${obj}"></a></li>
+                    <li class="page-item"><a class="page-link" th:href="@{|/post/list?${obj.pageUrl}|}" th:text="${obj.pageNumber}"></a></li>
                 </th:block>
 
-                <th:block th:if="${data.pageNumber != data.totalPage}">
+                <th:block th:if="${data.nextPage != ''}">
                     <li class="page-item">
-                        <a class="page-link" href="#" aria-label="Next">
+                        <a class="page-link" th:href="${data.nextPage}" aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
                         </a>
                     </li>
@@ -65,17 +65,13 @@
 
     <div class="mx-5 post-search-div">
         <div class="input-group mb-3 post-search-inner-div">
-            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Dropdown</button>
-            <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#">Action</a></li>
-                <li><a class="dropdown-item" href="#">Action</a></li>
-                <li><a class="dropdown-item" href="#">Another action</a></li>
-                <li><a class="dropdown-item" href="#">Something else here</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="#">Separated link</a></li>
-            </ul>
-            <input type="text" class="form-control" aria-label="Text input with dropdown button">
-            <button class="btn btn-primary" type="submit">검색</button>
+            <select class="form-select" aria-label="Default select example" id="searchType">
+                <option value="title" th:selected="${data.searchType} == 'title'">제목</option>
+                <option value="content" th:selected="${data.searchType} == 'content'">내용</option>
+                <option value="userId" th:selected="${data.searchType} == 'userId'">아이디</option>
+            </select>
+            <input type="text" class="form-control" aria-label="Text input with dropdown button" id="searchText" th:value="${data.searchText}">
+            <button class="btn btn-primary" type="button" th:onclick="search()">검색</button>
         </div>
 
 
@@ -84,6 +80,23 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <th:block th:replace="~{/common/bottom}"></th:block>
+    <script src="/js/common.js"></script>
+
+    <script>
+
+        function search(){
+            const searchType = $("#searchType").val();
+            const searchText = $("#searchText").val().trim();
+
+            if(searchText === ''){
+                location.href = "/post/list"
+            }else{
+                location.href = "/post/list?searchType=" + searchType + "&searchText=" + searchText;
+            }
+
+        }
+
+    </script>
 </body>
 </html>

@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -61,6 +62,13 @@ public class UserController {
                 .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
                 .header(HttpHeaders.SET_COOKIE, responseCookie2.toString())
                 .body(Response.success(ResultCode.USER_LOGIN_SUCCESS, userLoginResponseDto));
+    }
+
+    @GetMapping(value = "/v1/user/logout")
+    public ResponseEntity<Response<Void>> logout(HttpServletRequest request, HttpServletResponse response){
+        jwtTokenProvider.removeTokenFromCookie(request, response);
+        SecurityContextHolder.clearContext();
+        return ResponseEntity.ok().body(Response.success(ResultCode.USER_LOGOUT_SUCCESS));
     }
 
     @PutMapping(value = "/v1/user")
