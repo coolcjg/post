@@ -29,7 +29,7 @@
 
         </form>
 
-        <button id="submitButton" class="btn btn-success" th:onclick="|login()|">로그인</button>
+        <button id="submitButton" class="btn btn-success submitBtn" th:onclick="login()">로그인</button>
     </div>
 
     <th:block th:replace="~{/common/bottom}"></th:block>
@@ -60,7 +60,7 @@
                 return;
             }
 
-            $("#submitButton").addClass("disabled");
+            disableButton();
 
             const json = JSON.stringify({
                 userId : $("#userId").val()
@@ -78,10 +78,17 @@
                         location.href = "/post/list";
                     }else{
                         alert('로그인이 실패하였습니다.');
-                        $("#submitButton").removeClass("disabled");
+                    }
+                },
+                error: function (data, status, xhr) {
+                    if(data.responseJSON.code === "404"){
+                        alert('해당 아이디가 없습니다.');
+
                     }
                 },
             });
+
+            enableButton();
         }
 
     </script>

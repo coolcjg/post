@@ -42,6 +42,8 @@ public enum ResultCode {
     POST_INVALID_PAGE_SIZE(HttpStatus.BAD_REQUEST, "페이지 사이즈가 적합하지 않습니다"),
     POST_INVALID_PAGE_NUMBER(HttpStatus.BAD_REQUEST, "페이지 번호가 적합하지 않습니다"),
 
+    POST_INVALID_AUTH(HttpStatus.BAD_REQUEST, "권한이 없습니다"),
+
     REPLY_SAVE_SUCCESS(HttpStatus.CREATED, "댓글 저장 성공"),
     REPLY_MODIFY_SUCCESS(HttpStatus.OK, "댓글 수정 성공"),
     REPLY_DELETE_SUCCESS(HttpStatus.OK, "댓글 삭제 성공"),

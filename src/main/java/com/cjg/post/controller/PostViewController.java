@@ -4,6 +4,7 @@ import com.cjg.post.domain.CustomUserDetails;
 import com.cjg.post.dto.request.PostListRequestDto;
 import com.cjg.post.service.PostService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +15,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
 @RequiredArgsConstructor
+@Log4j2
 public class PostViewController {
 
     private final PostService postService;
@@ -54,11 +56,14 @@ public class PostViewController {
         return "post/write";
     }
 
-    @GetMapping(value = "/post/modify")
-    public String modify(){
+    @GetMapping(value = "/post/{postId}/modify")
+    public String modify(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long postId, Model model){
+        if(postService.isSameUser(customUserDetails, postId)){
+            model.addAttribute("data", postService.view(postId));
+        }else{
+            log.error("권한없음");
+        }
         return "post/modify";
     }
-
-
 
 }

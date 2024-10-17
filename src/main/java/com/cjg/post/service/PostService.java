@@ -1,16 +1,20 @@
 package com.cjg.post.service;
 
 import com.cjg.post.code.ResultCode;
+import com.cjg.post.domain.CustomUserDetails;
 import com.cjg.post.domain.Post;
 import com.cjg.post.dto.request.PostListRequestDto;
+import com.cjg.post.dto.request.PostModifyRequestDto;
 import com.cjg.post.dto.request.PostSaveRequestDto;
 import com.cjg.post.dto.response.PageItem;
 import com.cjg.post.dto.response.PostListResponseDto;
 import com.cjg.post.dto.response.PostResponseDto;
 import com.cjg.post.exception.CustomException;
 import com.cjg.post.repository.PostRepository;
+import com.cjg.post.util.AES256;
 import com.cjg.post.util.DateToString;
 import com.cjg.post.util.PageUtil;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -19,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +35,7 @@ public class PostService {
     private final UserService userService;
     private final PostRepository postRepository;
     private final DateToString dateToString;
+    private final AES256 aes256;
 
     public PostResponseDto save(PostSaveRequestDto dto){
 
@@ -111,16 +117,20 @@ public class PostService {
         Post post = postRepository.findById(postId).orElseThrow(()-> new CustomException(ResultCode.POST_SEARCH_NOT_FOUND));
         post.setView(post.getView()+1);
 
-        return PostResponseDto.builder()
-                .postId(post.getPostId())
-                .userId(post.getUser().getUserId())
-                .image(post.getUser().getImage())
-                .title(post.getTitle())
-                .content(post.getContent())
-                .view(post.getView())
-                .regDate(dateToString.apply(post.getRegDate()))
-                .modDate(dateToString.apply(post.getModDate()))
-                .build();
+        return postToDto(post);
+    }
+
+
+    @Transactional
+    public PostResponseDto modify(PostModifyRequestDto dto){
+
+        Post post = postRepository.findById(dto.getPostId()).orElseThrow(()->new CustomException(ResultCode.POST_SEARCH_NOT_FOUND));
+        post.setTitle(dto.getTitle());
+        post.setContent(dto.getContent());
+        post.setOpen(dto.getOpen().charAt(0));
+        post.setModDate(LocalDateTime.now());
+
+        return postToDto(post);
     }
 
     public String getQueryParams(PostListRequestDto dto, int pageNumber){
@@ -145,6 +155,32 @@ public class PostService {
         return sb.toString();
 
     };
+
+    public boolean isSameUser(CustomUserDetails customUserDetails, Long postId){
+        boolean result = false;
+        Post post = postRepository.findById(postId).orElseThrow(()-> new CustomException(ResultCode.USER_SEARCH_NOT_FOUND));
+
+        if(customUserDetails != null && customUserDetails.getUsername().equals(post.getUser().getUserId())){
+            result = true;
+        }
+        return result;
+    }
+
+
+    public PostResponseDto postToDto(Post post){
+        return PostResponseDto.builder()
+                .postId(post.getPostId())
+                .userId(post.getUser().getUserId())
+                .name(aes256.decrypt(post.getUser().getName()))
+                .image(post.getUser().getImage())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .open(post.getOpen())
+                .view(post.getView())
+                .regDate(dateToString.apply(post.getRegDate()))
+                .modDate(dateToString.apply(post.getModDate()))
+                .build();
+    }
 
     /*
     public PostLoginResponseDto login(PostLoginRequestDto requestDto){
@@ -183,26 +219,7 @@ public class PostService {
     }
 
 
-    @Transactional
-    public PostResponseDto modify(PostSaveRequestDto dto){
 
-        Post user = userRepository.findByPostId(dto.getPostId());
-        user.setName(aes256.encrypt(dto.getName()));
-        user.setPassword(passwordEncoder.encode(dto.getPassword()));
-
-        if(dto.getImage() != null){
-            String image = user.getImage().substring(user.getImage().lastIndexOf("/")+1);
-            s3.deleteImageToS3(image);
-            String newImage = s3.upload(dto.getImage());
-            user.setImage(newImage);
-        }
-
-        return PostResponseDto.builder()
-                .userId(dto.getPostId())
-                .name(dto.getName())
-                .image(user.getImage())
-                .build();
-    }
 
     @Transactional
     public void delete(PostDeleteRequestDto dto){
@@ -223,3 +240,4 @@ public class PostService {
 
      */
 }
+
