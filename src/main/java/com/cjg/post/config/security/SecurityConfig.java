@@ -43,7 +43,7 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.GET, "/user/login", "/user/signup").permitAll()
 
                                 .requestMatchers(HttpMethod.GET, "/post/list").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/post/view/*").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/post/*").permitAll()
 
                                 .requestMatchers(HttpMethod.GET, "/v1/user/*/count").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/v1/user", "/v1/user/login").permitAll()

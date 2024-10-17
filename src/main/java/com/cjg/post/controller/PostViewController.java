@@ -43,9 +43,9 @@ public class PostViewController {
         return "post/list";
     }
 
-    @GetMapping(value = "/post/view/{postId}")
-    public String view(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long postId){
-
+    @GetMapping(value = "/post/{postId}")
+    public String view(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long postId, Model model){
+        model.addAttribute("data", postService.view(postId));
         return "post/view";
     }
 

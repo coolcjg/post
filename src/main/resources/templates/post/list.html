@@ -23,7 +23,7 @@
             </thead>
             <tbody>
             <tr th:each="obj : ${data.list}">
-                <th scope="row" th:text="${obj.title}"></th>
+                <th scope="row" th:text="${obj.title}" th:onclick="|postView(${obj.postId})|"></th>
                 <td th:text="${obj.userId}"></td>
                 <td th:text="${obj.regDate}"></td>
                 <td th:text="${obj.view}"></td>
@@ -94,7 +94,10 @@
             }else{
                 location.href = "/post/list?searchType=" + searchType + "&searchText=" + searchText;
             }
+        }
 
+        function postView(postId){
+            location.href="/post/" + postId;
         }
 
     </script>

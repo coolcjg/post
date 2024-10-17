@@ -1,11 +1,13 @@
 package com.cjg.post.service;
 
+import com.cjg.post.code.ResultCode;
 import com.cjg.post.domain.Post;
 import com.cjg.post.dto.request.PostListRequestDto;
 import com.cjg.post.dto.request.PostSaveRequestDto;
 import com.cjg.post.dto.response.PageItem;
 import com.cjg.post.dto.response.PostListResponseDto;
 import com.cjg.post.dto.response.PostResponseDto;
+import com.cjg.post.exception.CustomException;
 import com.cjg.post.repository.PostRepository;
 import com.cjg.post.util.DateToString;
 import com.cjg.post.util.PageUtil;
@@ -101,6 +103,23 @@ public class PostService {
                 .totalCount(page.getTotalElements())
                 .searchType(dto.getSearchType())
                 .searchText(dto.getSearchText())
+                .build();
+    }
+
+    public PostResponseDto view(Long postId){
+
+        Post post = postRepository.findById(postId).orElseThrow(()-> new CustomException(ResultCode.POST_SEARCH_NOT_FOUND));
+        post.setView(post.getView()+1);
+
+        return PostResponseDto.builder()
+                .postId(post.getPostId())
+                .userId(post.getUser().getUserId())
+                .image(post.getUser().getImage())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .view(post.getView())
+                .regDate(dateToString.apply(post.getRegDate()))
+                .modDate(dateToString.apply(post.getModDate()))
                 .build();
     }
 
