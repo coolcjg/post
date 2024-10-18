@@ -9,7 +9,7 @@
 </head>
 <body>
 
-    <th:block th:replace="~{/common/nav}"></th:block>
+    <th:block th:replace="~{common/nav}"></th:block>
 
     <div class="d-flex justify-content-center">
         <div class="mx-5 w-500">
@@ -38,6 +38,21 @@
             <div>
                 <div class="mb-2">댓글 <span class="fw-bold" th:text="${data.commentResponseDtoList.size()}"></span></div>
                 <div>
+
+                    <th:block th:each="obj : ${data.commentResponseDtoList}">
+                        <div class="border-bottom ms-0 mb-3">
+                            <div th:text="${obj.name}"></div>
+                            <div th:text="${obj.content}"></div>
+                            <div>
+                                <div th:text="${obj.regDate}"></div>
+                                <!--
+                                <div>답글 쓰기</div>
+                                -->
+                            </div>
+                        </div>
+                    </th:block>
+
+                    <!-- 댓글 작성 영역 -->
                     <div class="border ps-3 mb-3" sec:authorize="isAuthenticated()">
                         <div th:text="${#authentication.principal.name}"></div>
                         <div>
@@ -47,6 +62,7 @@
                             <button class="btn btn-sm btn-success submitBtn" type="button" th:onclick="insert()">등록</button>
                         </div>
                     </div>
+
                 </div>
             </div>
 
@@ -112,7 +128,7 @@
 
     </div>
 
-    <th:block th:replace="~{/common/bottom}"></th:block>
+    <th:block th:replace="~{common/bottom}"></th:block>
     <script src="/js/common.js"></script>
 
     <script>

@@ -9,7 +9,7 @@
 </head>
 <body>
 
-    <th:block th:replace="~{/common/nav}"></th:block>
+    <th:block th:replace="~{common/nav}"></th:block>
 
     <div class="signupDiv">
         <form class="w-500">
@@ -63,7 +63,7 @@
         <button id="submitButton" class="btn btn-success" th:onclick="|userInsert()|">회원가입</button>
     </div>
 
-    <th:block th:replace="~{/common/bottom}"></th:block>
+    <th:block th:replace="~{common/bottom}"></th:block>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/core.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/sha256.js"></script>
     <script src="/js/common.js"></script>

@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -31,6 +32,9 @@ public class JwtFilter extends OncePerRequestFilter {
 			, "/js/jquery-3.7.1.js", "/css/style.css"
 	};
 
+	@Value("${cookie.domain}")
+	private String cookieDomain;
+
 	@Override
 	protected void doFilterInternal(
 			HttpServletRequest request,
@@ -49,10 +53,10 @@ public class JwtFilter extends OncePerRequestFilter {
 
 						Cookie cookie = new Cookie("accessToken", token[0]);
 						cookie.setHttpOnly(true);
-						cookie.setSecure(true);
+						cookie.setSecure(false);
 						cookie.setPath("/");
 						cookie.setMaxAge(60*30);
-						cookie.setDomain("localhost");
+						cookie.setDomain(cookieDomain);
 
 						response.addCookie(cookie);
 					}

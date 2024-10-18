@@ -195,9 +195,10 @@ public class PostService {
     public List<CommentResponseDto> commentListToDto(List<Comment> commentList){
         return commentList.stream().map(e->CommentResponseDto.builder()
                 .commentId(e.getCommentId())
-                .parentId(e.getComment().getCommentId())
+                .parentId(e.getComment() != null ? e.getComment().getCommentId() : 0)
                 .postId(e.getPost().getPostId())
                 .userId(e.getUser().getUserId())
+                .name(aes256.decrypt(e.getUser().getName()))
                 .content(e.getContent())
                 .regDate(dateToString.apply(e.getRegDate()))
                 .build()).toList();

@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,9 @@ public class UserController {
     private final JwtTokenProvider jwtTokenProvider;
 
     private final AuthCheck auth;
+
+    @Value("${cookie.domain}")
+    private String cookieDomain;
 
 
 
@@ -51,18 +55,18 @@ public class UserController {
 
         ResponseCookie responseCookie = ResponseCookie.from("accessToken",userLoginResponseDto.getAccessToken())
                 .httpOnly(true)
-                .secure(true)
+                .secure(false)
                 .path("/")
                 //.maxAge(60*30) 세션으로 설정
-                .domain("localhost")
+                .domain(cookieDomain)
                 .build();
 
         ResponseCookie responseCookie2 = ResponseCookie.from("refreshToken",userLoginResponseDto.getRefreshToken())
                 .httpOnly(true)
-                .secure(true)
+                .secure(false)
                 .path("/")
                 //.maxAge(60*60*10) 세션으로 설정
-                .domain("localhost")
+                .domain(cookieDomain)
                 .build();
 
         return ResponseEntity.ok()

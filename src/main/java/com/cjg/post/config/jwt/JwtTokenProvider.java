@@ -30,6 +30,9 @@ public class JwtTokenProvider {
 	@Value("${spring.jwt.secret}")
 	private String secretKey;
 
+	@Value("${cookie.domain}")
+	private String cookieDomain;
+
 	@Value("${spring.jwt.token.access-expiration-time}")
 	public long accessExpirationTime;
 
@@ -177,9 +180,12 @@ public class JwtTokenProvider {
 		if(cookies != null){
 			System.out.println("쿠키제거 작업중");
 			for(Cookie cookie : cookies){
-				cookie.setValue("");
+				cookie.setHttpOnly(true);
+				cookie.setSecure(false);
 				cookie.setPath("/");
+				cookie.setValue("");
 				cookie.setMaxAge(0);
+				cookie.setDomain(cookieDomain);
 				response.addCookie(cookie);
 			}
 		}
