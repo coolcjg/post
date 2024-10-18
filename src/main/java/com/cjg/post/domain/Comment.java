@@ -2,6 +2,7 @@ package com.cjg.post.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 
@@ -37,6 +38,10 @@ public class Comment {
 
     @Column(nullable = false)
     private String content;
+
+    @Column(nullable = false)
+    @ColumnDefault("'N'")
+    private Character delete;
 
     @CreationTimestamp
     private LocalDateTime regDate;
