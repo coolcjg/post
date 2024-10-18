@@ -113,12 +113,14 @@ public class PostService {
     public PostResponseDto view(CustomUserDetails customUserDetails, Long postId){
         Post post = postRepository.findById(postId).orElseThrow(()-> new CustomViewException(ResultCode.POST_SEARCH_NOT_FOUND));
         if(post.getOpen() == 'Y'){
+            post.setView(post.getView()+1);
             return postToDto(post);
         }else{
             if(customUserDetails == null){
                 throw new CustomViewException(ResultCode.POST_INVALID_AUTH);
             }else{
                 if(auth.isSameUserForUser(customUserDetails, post.getUser().getUserId())){
+                    post.setView(post.getView()+1);
                     return postToDto(post);
                 }else{
                     throw new CustomViewException(ResultCode.POST_INVALID_AUTH);
