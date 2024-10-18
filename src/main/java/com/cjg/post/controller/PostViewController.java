@@ -63,7 +63,7 @@ public class PostViewController {
     @GetMapping(value = "/post/{postId}/modify")
     public String modify(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long postId, Model model){
         if(authCheck.isSameUserForPost(customUserDetails, postId)){
-            model.addAttribute("data", postService.view(null, postId));
+            model.addAttribute("data", postService.view(customUserDetails, postId));
         }else{
             throw new CustomViewException(ResultCode.POST_INVALID_AUTH);
         }

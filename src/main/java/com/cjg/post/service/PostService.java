@@ -112,14 +112,20 @@ public class PostService {
     @Transactional
     public PostResponseDto view(CustomUserDetails customUserDetails, Long postId){
         Post post = postRepository.findById(postId).orElseThrow(()-> new CustomViewException(ResultCode.POST_SEARCH_NOT_FOUND));
-        if(customUserDetails == null || post.getOpen() == 'Y' || (post.getOpen() == 'N' && auth.isSameUserForUser(customUserDetails, post.getUser().getUserId()))){
-            post.setView(post.getView()+1);
+        if(post.getOpen() == 'Y'){
             return postToDto(post);
         }else{
-            throw new CustomViewException(ResultCode.POST_INVALID_AUTH);
+            if(customUserDetails == null){
+                throw new CustomViewException(ResultCode.POST_INVALID_AUTH);
+            }else{
+                if(auth.isSameUserForUser(customUserDetails, post.getUser().getUserId())){
+                    return postToDto(post);
+                }else{
+                    throw new CustomViewException(ResultCode.POST_INVALID_AUTH);
+                }
+            }
         }
     }
-
 
     @Transactional
     public PostResponseDto modify(PostModifyRequestDto dto){
