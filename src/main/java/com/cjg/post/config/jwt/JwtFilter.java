@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.security.core.Authentication;
@@ -25,12 +24,6 @@ import java.io.IOException;
 public class JwtFilter extends OncePerRequestFilter {
 
 	private final JwtTokenProvider jwtTokenProvider;
-
-	final String[] freePassUrl = {
-			"/user/login"
-			,"/v1/user/login"
-			, "/js/jquery-3.7.1.js", "/css/style.css"
-	};
 
 	@Value("${cookie.domain}")
 	private String cookieDomain;
@@ -51,6 +44,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
 					if(!prevAccessToken.equals(token[0])){
 
+						//refreshToken만료기간이 지나지 않으면 새로발급받은 accessToken을 쿠키에 설정한다.
 						Cookie cookie = new Cookie("accessToken", token[0]);
 						cookie.setHttpOnly(true);
 						cookie.setSecure(false);
@@ -61,24 +55,23 @@ public class JwtFilter extends OncePerRequestFilter {
 						response.addCookie(cookie);
 					}
 
+					//토큰이 있다는것은 로그인을 했다는것이기 때문에 추가로 인증로직을 수행하지 않는다.
 					Authentication auth = jwtTokenProvider.getAuthentication(token[0]);
-					SecurityContextHolder.getContext().setAuthentication(auth); // 정상 토큰이면 SecurityContext에 저장
+					SecurityContextHolder.getContext().setAuthentication(auth);
 				}else{
+					//토큰 처리가 실패했을 경우에 로그인 페이지 이동
 					invalidToken(request, response);
 				}
 			} catch (RedisConnectionFailureException | ExpiredJwtException e) {
 				SecurityContextHolder.clearContext();
 				log.error(e);
+
+				//토큰 처리가 실패했을 경우에 로그인 페이지 이동
 				invalidToken(request, response);
 			}
         }
 
 		filterChain.doFilter(request, response);
-	}
-
-	@Override
-	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-		return StringUtils.startsWithAny(request.getRequestURI(),freePassUrl);
 	}
 
 	private void invalidToken(HttpServletRequest request, HttpServletResponse response) throws IOException{

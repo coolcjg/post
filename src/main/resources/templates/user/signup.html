@@ -93,7 +93,6 @@
                 url: "/v1/user/" + userId + "/count",
                 type: "GET",
                 success: function (data, status, xhr) {
-                    console.log(data);
                     if(data.data === 0){
                         alert('사용 가능한 아이디입니다.');
                         checkUserIdYN = 'Y';
@@ -152,7 +151,6 @@
                 contentType: false,
                 cache : false,
                 success: function (data, status, xhr) {
-                    console.log(data);
                     if(data.code === "201"){
                         alert('회원 가입이 완료되었습니다.');
                         location.href='/user/login';

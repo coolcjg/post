@@ -1,8 +1,5 @@
 package com.cjg.post.domain;
 
-import com.cjg.post.code.UserRole;
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;

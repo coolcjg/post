@@ -86,8 +86,6 @@ public class JwtTokenProvider {
 				.signWith(SignatureAlgorithm.HS256, secretKey)
 				.compact();
 
-		System.out.println("Redis Key : " + authentication.getName());
-
 		// redis에 저장
 		redisTemplate.opsForValue().set(
 				authentication.getName(),
@@ -178,7 +176,6 @@ public class JwtTokenProvider {
 	public void removeTokenFromCookie(HttpServletRequest request, HttpServletResponse response){
 		Cookie[] cookies = request.getCookies();
 		if(cookies != null){
-			System.out.println("쿠키제거 작업중");
 			for(Cookie cookie : cookies){
 				cookie.setHttpOnly(true);
 				cookie.setSecure(false);

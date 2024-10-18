@@ -94,17 +94,6 @@ public class PostService {
         List<Integer> pagination = PageUtil.getStartEndPage(dto.getPageNumber(), totalPage);
         List<PageItem> pageItemList = pagination.stream().map(pageNumber-> new PageItem(pageNumber, getQueryParams(dto, pageNumber))).toList();
 
-        log.info("---------------");
-        log.info("list : " + list);
-        log.info("pagination : " + pagination);
-        log.info("prevPage : " + prevPage);
-        log.info("nextPage : " + nextPage);
-        log.info("pageItemList : " + pageItemList);
-        log.info("pageNumber : " + (page.getPageable().getPageNumber()+1));
-        log.info("totalPage : " + totalPage);
-        log.info("totalCount : " + page.getTotalElements());
-        log.info("---------------");
-
         return PostListResponseDto.builder()
                 .list(list)
                 .pageList(pageItemList)

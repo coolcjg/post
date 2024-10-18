@@ -9,6 +9,7 @@ import com.amazonaws.util.IOUtils;
 import com.cjg.post.code.ResultCode;
 import com.cjg.post.exception.CustomException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,6 +24,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
+@Log4j2
 public class S3 {
 
     private final AmazonS3 amazonS3;
@@ -88,9 +90,7 @@ public class S3 {
             //실제로 S3에 이미지 데이터를 넣는 부분이다.
             amazonS3.putObject(putObjectRequest); // put image to S3
         }catch (SdkClientException e){
-            System.out.println(e.getCause());
-            System.out.println(e.getMessage());
-            System.out.println(e.getStackTrace());
+            log.error(e.getMessage());
             throw new CustomException(ResultCode.S3_SDK_FAIL);
         }finally {
             byteArrayInputStream.close();
@@ -107,9 +107,7 @@ public class S3 {
                 amazonS3.deleteObject(bucketName,fileName);
             }
         }catch (SdkClientException e){
-            System.out.println(e.getCause());
-            System.out.println(e.getMessage());
-            System.out.println(e.getStackTrace());
+            log.error(e.getMessage());
             throw new CustomException(ResultCode.S3_SDK_FAIL);
         }
     }

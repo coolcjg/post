@@ -40,14 +40,14 @@ public class ExceptionAdvice {
                 .body(Response.fail(ResultCode.INVALID_PARAM, errorMessage));
     }
 
-    //잘못된 형식 체크(코드)
+    //잘못된 형식 체크
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<Response> HttpMessageNotReadableException(HttpMessageNotReadableException e) {
         return ResponseEntity.status(ResultCode.INVALID_PARAM.getHttpStatus())
                 .body(Response.fail(ResultCode.INVALID_PARAM));
     }
 
-    //잘못된 형식 체크(서적 조회 : bookId에 특수문자 사용시)
+    //잘못된 형식 체크(조회 : Id에 특수문자 사용시)
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<Response> MethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
         return ResponseEntity.status(ResultCode.INVALID_PARAM.getHttpStatus())

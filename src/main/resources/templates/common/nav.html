@@ -61,7 +61,6 @@
             url: "/v1/user/logout",
             type: "GET",
             success: function (data, status, xhr) {
-              console.log(data);
               if(data.code === "200"){
                 location.href='/post/list'
               }else{

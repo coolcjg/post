@@ -27,7 +27,6 @@ import java.util.Arrays;
 public class SecurityConfig {
 
     private final JwtFilter jwtTokenFilter;
-
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     @Bean
@@ -48,7 +47,7 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.GET, "/v1/user/*/count").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/v1/user", "/v1/user/login").permitAll()
 
-                                //에러페이지 정상 표시
+                                //에러페이지 표시하기위해 설정
                                 .requestMatchers("/error").permitAll()
                                 .anyRequest().authenticated()
 
@@ -78,7 +77,7 @@ public class SecurityConfig {
 
 
     /*
-        패스워드 단방향 암호화
+        스프링 시큐리티 암호화 설정
      */
     @Bean
     public PasswordEncoder passwordEncoder() {

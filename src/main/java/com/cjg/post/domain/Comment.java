@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
-@DynamicInsert //view가  null로 들어가는것 방지
 @DynamicUpdate
 @AllArgsConstructor(access= AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -49,18 +48,5 @@ public class Comment {
     private LocalDateTime regDate;
 
     private LocalDateTime modDate;
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }

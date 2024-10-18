@@ -19,14 +19,12 @@ public enum ResultCode {
 
     USER_SEARCH_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자가 없습니다"),
     USER_INVALID_USERID(HttpStatus.BAD_REQUEST, "아이디가 적합하지 않습니다."),
-    USER_INVALID_PHONE(HttpStatus.BAD_REQUEST, "전화번호가 적합하지 않습니다."),
-    USER_INVALID_EMAIL(HttpStatus.BAD_REQUEST, "이메일이 적합하지 않습니다."),
     USER_INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "비밀번호가 적합하지 않습니다."),
     USER_INVALID_IMAGE(HttpStatus.BAD_REQUEST, "사진이 적합하지 않습니다."),
     USER_INVALID_AUTH(HttpStatus.BAD_REQUEST, "권한이 적합하지 않습니다."),
 
     S3_IO_FAIL(HttpStatus.BAD_REQUEST, "이미지 처리가 실패하였습니다"),
-    S3_EXT_FAIL(HttpStatus.BAD_REQUEST, "이미지 확장자가 정합하지 않습니다"),
+    S3_EXT_FAIL(HttpStatus.BAD_REQUEST, "이미지 확장자가 맞지 않습니다"),
     S3_SDK_FAIL(HttpStatus.BAD_REQUEST, "이미지 업로드에 실패하였습니다"),
 
     POST_SAVE_SUCCESS(HttpStatus.CREATED, "게시글 저장 성공"),
@@ -39,15 +37,9 @@ public enum ResultCode {
     POST_INVALID_TITLE(HttpStatus.BAD_REQUEST, "제목이 적합하지 않습니다."),
     POST_INVALID_CONTENT(HttpStatus.BAD_REQUEST, "내용이 적합하지 않습니다."),
     POST_INVALID_OPEN(HttpStatus.BAD_REQUEST, "공개여부가 적합하지 않습니다."),
-    POST_INVALID_HIDDEN(HttpStatus.BAD_REQUEST, "노출여부가 적합하지 않습니다."),
     POST_INVALID_PAGE_SIZE(HttpStatus.BAD_REQUEST, "페이지 사이즈가 적합하지 않습니다"),
     POST_INVALID_PAGE_NUMBER(HttpStatus.BAD_REQUEST, "페이지 번호가 적합하지 않습니다"),
-
     POST_INVALID_AUTH(HttpStatus.BAD_REQUEST, "게시판 권한이 없습니다"),
-
-    REPLY_SAVE_SUCCESS(HttpStatus.CREATED, "댓글 저장 성공"),
-    REPLY_MODIFY_SUCCESS(HttpStatus.OK, "댓글 수정 성공"),
-    REPLY_DELETE_SUCCESS(HttpStatus.OK, "댓글 삭제 성공"),
 
     INVALID_PARAM(HttpStatus.BAD_REQUEST, "적합하지 않은 파라미터입니다"),
 

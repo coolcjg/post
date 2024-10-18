@@ -26,18 +26,12 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint{
 	@Override
 	public void commence(HttpServletRequest request, HttpServletResponse response,
 			AuthenticationException authException) throws IOException, ServletException {
-			log.error("인증 에러 처리 exception : " + authException);
-			log.error("인증 에러 처리 getStackTrace : " + authException.getStackTrace());
-			log.error("인증 에러 처리 cause : " + authException.getCause());
 			log.error("인증 에러 처리 message : " + authException.getMessage());
 			jwtTokenProvider.removeTokenFromCookie(request, response);
 			setResponse(response, authException);
     }
 	
 	private void setResponse(HttpServletResponse response, AuthenticationException authException) throws IOException {
-		/*
-		response.sendRedirect("/user/login");
-		*/
 		response.setContentType("application/json;charset=UTF-8");
 		response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 		response.getWriter().print(new Gson().toJson(Response.fail(ResultCode.INVALID_PARAM, authException.getMessage())));
