@@ -133,7 +133,7 @@
                 return;
             }
 
-            $("#submitButton").addClass("disabled");
+            disableButton();
 
             const formData = new FormData();
 
@@ -163,6 +163,8 @@
                     alert(data.responseJSON.message);
                 },
             });
+
+            enableButton();
 
         }
     </script>

@@ -6,6 +6,7 @@ import com.cjg.post.config.jwt.JwtTokenProvider;
 import com.cjg.post.domain.CustomUserDetails;
 import com.cjg.post.dto.request.UserDeleteRequestDto;
 import com.cjg.post.dto.request.UserLoginRequestDto;
+import com.cjg.post.dto.request.UserModifyRequestDto;
 import com.cjg.post.dto.request.UserSaveRequestDto;
 import com.cjg.post.dto.response.UserLoginResponseDto;
 import com.cjg.post.dto.response.UserResponseDto;
@@ -83,7 +84,7 @@ public class UserController {
     }
 
     @PutMapping(value = "/v1/user")
-    public ResponseEntity<Response<?>> modify(@AuthenticationPrincipal CustomUserDetails customUserDetails, @ModelAttribute @Valid UserSaveRequestDto dto){
+    public ResponseEntity<Response<?>> modify(@AuthenticationPrincipal CustomUserDetails customUserDetails, @ModelAttribute @Valid UserModifyRequestDto dto){
         if(auth.isSameUserForUser(customUserDetails, dto.getUserId())){
             return ResponseEntity.ok(Response.success(ResultCode.USER_MODIFY_SUCCESS, userService.modify(dto)));
         }else{

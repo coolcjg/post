@@ -105,6 +105,7 @@
                 },
             });
 
+            enableButton();
         }
 
         function userDelete(){
@@ -119,12 +120,11 @@
                 return;
             }
 
-            disableButton();
-
             if(!confirm("탈퇴하시겠습니까?")){
-                enableButton();
                 return;
             }
+
+            disableButton();
 
             const json = JSON.stringify({
                 userId : '[[${#authentication.name}]]'

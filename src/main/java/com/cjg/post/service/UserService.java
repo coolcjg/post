@@ -6,6 +6,7 @@ import com.cjg.post.config.jwt.JwtTokenProvider;
 import com.cjg.post.domain.User;
 import com.cjg.post.dto.request.UserDeleteRequestDto;
 import com.cjg.post.dto.request.UserLoginRequestDto;
+import com.cjg.post.dto.request.UserModifyRequestDto;
 import com.cjg.post.dto.request.UserSaveRequestDto;
 import com.cjg.post.dto.response.UserLoginResponseDto;
 import com.cjg.post.dto.response.UserResponseDto;
@@ -112,7 +113,7 @@ public class UserService {
 
 
     @Transactional
-    public UserResponseDto modify(UserSaveRequestDto dto){
+    public UserResponseDto modify(UserModifyRequestDto dto){
 
         User user = userRepository.findByUserId(dto.getUserId());
         user.setName(aes256.encrypt(dto.getName()));
