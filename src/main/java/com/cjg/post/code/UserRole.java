@@ -6,6 +6,10 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum UserRole {
+
+    /*
+    권한기능은 사용하지 않음
+     */
     ADMIN("ADMIN"),
     USER("USER");
 

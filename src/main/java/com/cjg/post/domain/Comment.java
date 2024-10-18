@@ -25,6 +25,9 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long commentId;
 
+    /*
+    대댓글 기능 : 시간 부족으로 인해 미구현
+     */
     @ManyToOne
     @JoinColumn(name="parent_id")
     private Comment comment;
