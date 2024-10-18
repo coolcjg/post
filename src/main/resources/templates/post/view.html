@@ -43,7 +43,7 @@
                         <div class="border-bottom ms-0 mb-3 commentElement" th:id="${obj.commentId}">
                             <div class="d-flex justify-content-between">
                                 <div th:text="|${obj.name}(${obj.userId})|"></div>
-                                <div th:if="${#authentication.name} == ${obj.userId} and ${obj.delete.toString().equals('N')}">
+                                <div class="buttonDiv" th:if="${#authentication.name} == ${obj.userId} and ${obj.delete.toString().equals('N')}">
 
                                     <!-- 타임리프 : 인텔리제이에서 오류나는데 실제 브라우저에서는 오류 안남 -->
                                     <button class="btn btn-sm btn-success submitBtn" type="button" th:onclick="openCommentModifyForm([[${obj.commentId}]], [[${obj.userId}]], [[${obj.name}]])">수정</button>
@@ -313,6 +313,7 @@
                     if(data.code === "200"){
                         alert('댓글 삭제 성공');
                         $(".commentDiv").find('div#'+commentId).find('.content').text('삭제된 댓글입니다');
+                        $(".commentDiv").find('div#'+commentId).find('.buttonDiv').remove();
                     }else{
                         alert(data.data.message);
                     }
