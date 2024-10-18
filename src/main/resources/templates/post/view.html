@@ -64,7 +64,7 @@
                     </th:block>
 
                     <!-- 댓글 작성 영역 -->
-                    <div id="" class="border ps-3 mb-3" sec:authorize="isAuthenticated()">
+                    <div id="commentWriteForm" class="border ps-3 mb-3" sec:authorize="isAuthenticated()">
                         <div th:text="${#authentication.principal.name}"></div>
                         <div>
                             <textarea type="text" class="form-control" id="content"></textarea>
@@ -222,8 +222,25 @@
             enableButton();
         }
 
-        function appendCommentDiv(data){
+        function appendCommentDiv(data) {
 
+            let html = "";
+            html += '<div class="border-bottom ms-0 mb-3 commentElement" id="'+data.commentId+'">';
+            html += '<div class="d-flex justify-content-between">';
+            html += '<div>' + data.name+'('+data.userId+')' + '</div>';
+            html += '<div class="buttonDiv">';
+            html += '<button class="btn btn-sm btn-success submitBtn" type="button" onclick="openCommentModifyForm(\'' + data.commentId + '\',\'' + data.userId  + '\',\'' +  data.name + '\')">수정</button>';
+            html += '<button class="btn btn-sm btn-danger ms-1 submitBtn" type="button" onclick="deleteComment(\'' + data.commentId + '\')">삭제</button>';
+            html += '</div>';
+            html += '</div>';
+            html += '<div class="content">' + data.content + '</div>';
+            html += '<div>';
+            html += '<div>' + data.regDate + '</div>';
+            html += '</div>';
+            html += '</div>';
+
+            const target = $("#commentWriteForm");
+            target.before(html);
 
         }
 
@@ -237,25 +254,25 @@
 
             let html = "";
             html += '<div id="commentModForm" class="commentModForm border ps-3 mb-3">';
-            html += '<div>' + name + "(" + userId + ")"+'</div>';
+            html += '<div>' + name + "(" + userId + ")" + '</div>';
             html += '<div>';
             html += '<textarea type="text" class="form-control" id="content">' + content + '</textarea>';
             html += '</div>'
             html += '<div class="d-flex justify-content-end">'
             html += '<button class="btn btn-sm btn-outline-success submitBtn" type="button" onclick="commentModifyAjax(\'' + commentId + '\')">수정</button>';
-            html += '<button class="btn btn-sm btn-outline-danger submitBtn ms-1" type="button" onclick="closeCommentModifyForm('+commentId+')">취소</button>';
+            html += '<button class="btn btn-sm btn-outline-danger submitBtn ms-1" type="button" onclick="closeCommentModifyForm(' + commentId + ')">취소</button>';
             html += '</div>';
             html += '</div>';
 
             target.after(html);
         }
 
-        function closeCommentModifyForm(commentId){
+        function closeCommentModifyForm(commentId) {
             $(".commentDiv").find('div.commentModForm').remove();
 
             const commentList = $(".commentDiv").find('div.commentElement');
-            for(let i=0; i<commentList.length; i++){
-                if(commentList.hasClass("d-none")){
+            for (let i = 0; i < commentList.length; i++) {
+                if (commentList.hasClass("d-none")) {
                     commentList.removeClass("d-none");
                 }
             }
