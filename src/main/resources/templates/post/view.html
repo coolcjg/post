@@ -44,8 +44,10 @@
                             <div class="d-flex justify-content-between">
                                 <div th:text="|${obj.name}(${obj.userId})|"></div>
                                 <div th:if="${#authentication.name} == ${obj.userId}">
-                                    <button class="btn btn-sm btn-success" type="button" th:onclick="openCommentModifyForm('[[${obj.commentId}]]', '[[${obj.userId}]]', '[[${obj.name}]]')">수정</button>
-                                    <button class="btn btn-sm btn-danger ms-1" type="button">삭제</button>
+
+                                    <!-- 타임리프 : 인텔리제이에서 오류나는데 실제 브라우저에서는 오류 안남 -->
+                                    <button class="btn btn-sm btn-success submitBtn" type="button" th:onclick="openCommentModifyForm([[${obj.commentId}]], [[${obj.userId}]], [[${obj.name}]])">수정</button>
+                                    <button class="btn btn-sm btn-danger ms-1 submitBtn" type="button">삭제</button>
                                 </div>
                             </div>
                             <div class="content" th:text="${obj.content}"></div>
@@ -232,8 +234,8 @@
             html += '<textarea type="text" class="form-control" id="content">' + content + '</textarea>';
             html += '</div>'
             html += '<div class="d-flex justify-content-end">'
-            html += '<button class="btn btn-sm btn-success submitBtn" type="button" th:onclick="commentModifyAjax()">수정</button>';
-            html += '<button class="btn btn-sm btn-danger submitBtn" type="button" onclick="closeCommentModifyForm('+commentId+')">취소</button>';
+            html += '<button class="btn btn-sm btn-success submitBtn" type="button" onclick="commentModifyAjax(\'' + commentId + '\')">수정</button>';
+            html += '<button class="btn btn-sm btn-danger submitBtn ms-1" type="button" onclick="closeCommentModifyForm('+commentId+')">취소</button>';
             html += '</div>';
             html += '</div>';
 
@@ -251,9 +253,39 @@
             }
         }
 
-        function commentModifyAjax(){
+        function commentModifyAjax(commentId){
 
+            if($(".commentModForm").find('textarea').val().trim() === ''){
+                alert('내용을 입력해주세요');
+                return;
+            }
 
+            disableButton();
+
+            const json = JSON.stringify({
+                commentId : commentId
+                , content : $(".commentModForm").find('textarea').val()
+            });
+
+            $.ajax({
+                url: "/v1/comment",
+                type: "PUT",
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                data : json,
+                success: function (data, status, xhr) {
+                    if(data.code === "200"){
+                        alert('댓글 수정 성공');
+                        $(".commentDiv").find('div#'+commentId).find('.content').text(data.data.content);
+                        closeCommentModifyForm();
+                    }
+                },
+                error: function (data, status, xhr) {
+                    alert(data.responseJSON.message);
+                },
+            });
+
+            enableButton();
         }
 
         /*]]>*/

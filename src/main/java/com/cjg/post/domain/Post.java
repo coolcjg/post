@@ -1,11 +1,10 @@
 package com.cjg.post.domain;
 
 import jakarta.persistence.*;
+import jakarta.persistence.OrderBy;
+import jakarta.persistence.Table;
 import lombok.*;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,6 +14,7 @@ import java.util.List;
 @Setter
 @Builder
 @DynamicInsert //view가  null로 들어가는것 방지
+@DynamicUpdate
 @AllArgsConstructor(access= AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name="accounz_post")
@@ -49,6 +49,7 @@ public class Post {
 	private LocalDateTime modDate;
 
 	@OneToMany(mappedBy="post", orphanRemoval = true)
+	@OrderBy("regDate asc")
 	@BatchSize(size=10)
 	private List<Comment> commentList;
 }
