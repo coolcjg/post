@@ -43,7 +43,7 @@
                         <div class="border-bottom ms-0 mb-3 commentElement" th:id="${obj.commentId}">
                             <div class="d-flex justify-content-between">
                                 <div th:text="|${obj.name}(${obj.userId})|"></div>
-                                <div class="buttonDiv" th:if="${#authentication.name} == ${obj.userId} and ${obj.delete.toString().equals('N')}">
+                                <div class="buttonDiv" th:if="${#authentication.name} == ${obj.userId} and ${obj.deleted.toString().equals('N')}">
 
                                     <!-- 타임리프 : 인텔리제이에서 오류나는데 실제 브라우저에서는 오류 안남 -->
                                     <button class="btn btn-sm btn-success submitBtn" type="button" th:onclick="openCommentModifyForm([[${obj.commentId}]], [[${obj.userId}]], [[${obj.name}]])">수정</button>
@@ -51,8 +51,8 @@
                                 </div>
                             </div>
 
-                            <div class="content" th:if="${obj.delete.toString().equals('N')}" th:text="${obj.content}"></div>
-                            <div class="content" th:if="${obj.delete.toString().equals('Y')}">삭제된 댓글입니다</div>
+                            <div class="content" th:if="${obj.deleted.toString().equals('N')}" th:text="${obj.content}"></div>
+                            <div class="content" th:if="${obj.deleted.toString().equals('Y')}">삭제된 댓글입니다</div>
 
                             <div>
                                 <div th:text="${obj.regDate}"></div>
@@ -210,8 +210,8 @@
                 data : json,
                 success: function (data, status, xhr) {
                     if(data.code === "201"){
-                        console.log(data);
                         alert('댓글 등록 성공');
+                        appendCommentDiv(data.data);
                     }
                 },
                 error: function (data, status, xhr) {
@@ -220,6 +220,11 @@
             });
 
             enableButton();
+        }
+
+        function appendCommentDiv(data){
+
+
         }
 
         function openCommentModifyForm(commentId, userId, name) {
@@ -237,8 +242,8 @@
             html += '<textarea type="text" class="form-control" id="content">' + content + '</textarea>';
             html += '</div>'
             html += '<div class="d-flex justify-content-end">'
-            html += '<button class="btn btn-sm btn-success submitBtn" type="button" onclick="commentModifyAjax(\'' + commentId + '\')">수정</button>';
-            html += '<button class="btn btn-sm btn-danger submitBtn ms-1" type="button" onclick="closeCommentModifyForm('+commentId+')">취소</button>';
+            html += '<button class="btn btn-sm btn-outline-success submitBtn" type="button" onclick="commentModifyAjax(\'' + commentId + '\')">수정</button>';
+            html += '<button class="btn btn-sm btn-outline-danger submitBtn ms-1" type="button" onclick="closeCommentModifyForm('+commentId+')">취소</button>';
             html += '</div>';
             html += '</div>';
 

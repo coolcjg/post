@@ -62,7 +62,7 @@ public class CommentService {
     @Transactional
     public void delete(CommentDeleteRequestDto dto){
         Comment comment = commentRepository.findById(dto.getCommentId()).orElseThrow(()->new CustomException(ResultCode.COMMENT_SEARCH_NOT_FOUND));
-        comment.setDelete('Y');
+        comment.setDeleted('Y');
     }
 
     private CommentResponseDto commentToDto(Comment comment){

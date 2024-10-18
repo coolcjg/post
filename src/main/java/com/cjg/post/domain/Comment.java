@@ -43,7 +43,7 @@ public class Comment {
 
     @Column(nullable = false)
     @ColumnDefault("'N'")
-    private Character delete;
+    private Character deleted;
 
     @CreationTimestamp
     private LocalDateTime regDate;

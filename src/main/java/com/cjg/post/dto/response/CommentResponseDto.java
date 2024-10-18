@@ -19,6 +19,6 @@ public class CommentResponseDto {
     private String name;
     private String regDate;
     private String content;
-    private Character delete;
+    private Character deleted;
 
 }
