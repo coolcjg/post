@@ -200,6 +200,7 @@ public class PostService {
                 .userId(e.getUser().getUserId())
                 .name(aes256.decrypt(e.getUser().getName()))
                 .content(e.getContent())
+                .delete(e.getDelete())
                 .regDate(dateToString.apply(e.getRegDate()))
                 .build()).toList();
     }

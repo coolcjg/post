@@ -87,7 +87,7 @@ public class UserController {
         if(auth.isSameUserForUser(customUserDetails, dto.getUserId())){
             return ResponseEntity.ok(Response.success(ResultCode.USER_MODIFY_SUCCESS, userService.modify(dto)));
         }else{
-            return ResponseEntity.ok(Response.success(ResultCode.USER_INVALID_AUTH));
+            return ResponseEntity.status(ResultCode.USER_INVALID_AUTH.getHttpStatus()).body(Response.success(ResultCode.USER_INVALID_AUTH));
         }
 
     }

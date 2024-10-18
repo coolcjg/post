@@ -43,7 +43,7 @@ public enum ResultCode {
     POST_INVALID_PAGE_SIZE(HttpStatus.BAD_REQUEST, "페이지 사이즈가 적합하지 않습니다"),
     POST_INVALID_PAGE_NUMBER(HttpStatus.BAD_REQUEST, "페이지 번호가 적합하지 않습니다"),
 
-    POST_INVALID_AUTH(HttpStatus.BAD_REQUEST, "권한이 없습니다"),
+    POST_INVALID_AUTH(HttpStatus.BAD_REQUEST, "게시판 권한이 없습니다"),
 
     REPLY_SAVE_SUCCESS(HttpStatus.CREATED, "댓글 저장 성공"),
     REPLY_MODIFY_SUCCESS(HttpStatus.OK, "댓글 수정 성공"),
@@ -65,7 +65,8 @@ public enum ResultCode {
     COMMENT_MODIFY_SUCCESS(HttpStatus.OK, "댓글 수정 성공"),
     COMMENT_DELETE_SUCCESS(HttpStatus.OK, "댓글 삭제 성공"),
 
-    COMMENT_SEARCH_NOT_FOUND(HttpStatus.NOT_FOUND, "댓글 조회 실패");
+    COMMENT_SEARCH_NOT_FOUND(HttpStatus.NOT_FOUND, "댓글 조회 실패"),
+    COMMENT_INVALID_AUTH(HttpStatus.NOT_FOUND, "댓글 권한이 없습니다");
 
     private final HttpStatus httpStatus;
     private final String message;

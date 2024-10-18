@@ -33,7 +33,7 @@ public class PostController {
         if(auth.isSameUserForPost(customUserDetails, dto.getPostId())){
             return ResponseEntity.ok(Response.success(ResultCode.POST_MODIFY_SUCCESS, postService.modify(dto)));
         }else{
-            return ResponseEntity.ok(Response.fail(ResultCode.POST_INVALID_AUTH));
+            return ResponseEntity.status(ResultCode.POST_INVALID_AUTH.getHttpStatus()).body(Response.fail(ResultCode.POST_INVALID_AUTH));
         }
     }
 
@@ -43,36 +43,7 @@ public class PostController {
             postService.delete(dto);
             return ResponseEntity.ok(Response.success(ResultCode.POST_DELETE_SUCCESS));
         }else{
-            return ResponseEntity.ok(Response.fail(ResultCode.POST_INVALID_AUTH));
+            return ResponseEntity.status(ResultCode.POST_INVALID_AUTH.getHttpStatus()).body(Response.fail(ResultCode.POST_INVALID_AUTH));
         }
     }
-
-    /*
-    @PostMapping(value = "/v1/post/login")
-    public ResponseEntity<Response<PostLoginResponseDto>> login(@RequestBody @Valid PostLoginRequestDto postLoginRequestDto){
-        PostLoginResponseDto postLoginResponseDto = postService.login(postLoginRequestDto);
-
-        ResponseCookie responseCookie = ResponseCookie.from("accessToken",postLoginResponseDto.getAccessToken())
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                //.maxAge(60*30) 세션으로 설정
-                .domain("localhost")
-                .build();
-
-        ResponseCookie responseCookie2 = ResponseCookie.from("refreshToken",postLoginResponseDto.getRefreshToken())
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                //.maxAge(60*60*10) 세션으로 설정
-                .domain("localhost")
-                .build();
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
-                .header(HttpHeaders.SET_COOKIE, responseCookie2.toString())
-                .body(Response.success(ResultCode.POST_LOGIN_SUCCESS, postLoginResponseDto));
-    }
-     */
-
 }

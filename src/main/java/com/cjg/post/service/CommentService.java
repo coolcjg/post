@@ -4,6 +4,7 @@ import com.cjg.post.code.ResultCode;
 import com.cjg.post.domain.Comment;
 import com.cjg.post.domain.Post;
 import com.cjg.post.domain.User;
+import com.cjg.post.dto.request.CommentDeleteRequestDto;
 import com.cjg.post.dto.request.CommentModifyRequestDto;
 import com.cjg.post.dto.request.CommentSaveRequestDto;
 import com.cjg.post.dto.response.CommentResponseDto;
@@ -56,6 +57,12 @@ public class CommentService {
         comment.setContent(dto.getContent());
         comment.setModDate(LocalDateTime.now());
         return commentToDto(comment);
+    }
+
+    @Transactional
+    public void delete(CommentDeleteRequestDto dto){
+        Comment comment = commentRepository.findById(dto.getCommentId()).orElseThrow(()->new CustomException(ResultCode.COMMENT_SEARCH_NOT_FOUND));
+        comment.setDelete('Y');
     }
 
     private CommentResponseDto commentToDto(Comment comment){
