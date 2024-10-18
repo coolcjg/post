@@ -38,6 +38,7 @@ public class CommentService {
         Comment comment = Comment.builder()
                 .post(post)
                 .user(user)
+                .deleted('N')
                 .content(dto.getContent())
                 .build();
 

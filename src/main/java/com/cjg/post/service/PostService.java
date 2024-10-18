@@ -14,6 +14,7 @@ import com.cjg.post.dto.response.PostListResponseDto;
 import com.cjg.post.dto.response.PostResponseDto;
 import com.cjg.post.exception.CustomException;
 import com.cjg.post.exception.CustomViewException;
+import com.cjg.post.repository.CommentRepository;
 import com.cjg.post.repository.PostRepository;
 import com.cjg.post.util.AES256;
 import com.cjg.post.util.AuthCheck;
@@ -39,6 +40,7 @@ public class PostService {
 
     private final UserService userService;
     private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
     private final DateToString dateToString;
     private final AES256 aes256;
     private final AuthCheck auth;
@@ -133,6 +135,7 @@ public class PostService {
 
     @Transactional
     public void delete(PostDeleteRequestDto dto){
+        commentRepository.deleteByPostPostId(dto.getPostId());
         postRepository.deleteById(dto.getPostId());
     }
 
