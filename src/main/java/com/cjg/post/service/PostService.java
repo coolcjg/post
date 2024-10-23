@@ -186,7 +186,7 @@ public class PostService {
                 .content(post.getContent())
                 .open(post.getOpen())
                 .view(post.getView())
-                .commentResponseDtoList(commentListToDto(post.getCommentList()))
+                .commentResponseDtoList(commentListToDto(commentRepository.recursiveList(post.getPostId())))
                 .regDate(dateToString.apply(post.getRegDate()))
                 .modDate(dateToString.apply(post.getModDate()))
                 .build();

@@ -30,6 +30,7 @@ public class CommentService {
     private final DateToString dateToString;
     private final AES256 aes256;
 
+    @Transactional
     public CommentResponseDto save(CommentSaveRequestDto dto){
 
         Post post = postRepository.findById(dto.getPostId()).orElseThrow(() -> new CustomException(ResultCode.POST_SEARCH_NOT_FOUND));
@@ -48,6 +49,10 @@ public class CommentService {
         }
 
         Comment result = commentRepository.save(comment);
+
+        if(dto.getParentId() == 0){
+            result.setParent(result);
+        }
 
         return commentToDto(result);
     }

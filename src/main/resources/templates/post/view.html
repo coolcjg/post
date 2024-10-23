@@ -36,11 +36,11 @@
             <hr/>
 
             <div>
-                <div class="mb-2">댓글 <span id="commentCount" class="fw-bold" th:text="${data.commentResponseDtoList.size()}"></span></div>
+                <div class="mb-2">댓글 <span id="commentCount" class="fw-bold" th:if ="${data.commentResponseDtoList != null}" th:text="${data.commentResponseDtoList.size()}"></span></div>
                 <div class="commentDiv">
 
                     <th:block th:each="obj : ${data.commentResponseDtoList}">
-                        <div class="border-bottom ms-0 mb-3 commentElement" th:id="${obj.commentId}">
+                        <div class="border-bottom mb-3 commentElement" th:classappend="${obj.parentId == obj.commentId ? 'ms-0' : 'ms-4'}" th:id="${obj.commentId}">
                             <div class="d-flex justify-content-between">
                                 <div th:text="|${obj.name}(${obj.userId})|"></div>
                                 <div class="buttonDiv" th:if="${#authentication.name} == ${obj.userId} and ${obj.deleted.toString().equals('N')}">
@@ -58,7 +58,7 @@
                                 <div th:text="${obj.regDate}"></div>
                             </div>
                             <div>
-                                <button class="btn btn-sm btn-success" type="button" th:onclick="openCommentReplyForm([[${obj.commentId}]], [[${obj.userId}]], [[${obj.name}]])">답글</button>
+                                <button class="btn btn-sm btn-success" type="button" th:onclick="openCommentReplyForm([[${obj.commentId}]], [[${obj.parentId}]], [[${obj.userId}]], [[${obj.name}]])">답글</button>
                             </div>
                         </div>
                     </th:block>
@@ -70,7 +70,7 @@
                             <textarea type="text" class="form-control" id="content"></textarea>
                         </div>
                         <div class="d-flex justify-content-end">
-                            <button class="btn btn-sm btn-success submitBtn" type="button" th:onclick="insert(0)">등록</button>
+                            <button class="btn btn-sm btn-success submitBtn" type="button" th:onclick="insert(0, 0)">등록</button>
                         </div>
                     </div>
 
@@ -133,9 +133,9 @@
             enableButton();
         }
 
-        function insert(parentId){
+        function insert(commentId, parentId){
 
-            const contentId = parentId === 0 ? "content" : "replayContent";
+            const contentId = commentId === 0 ? "content" : "replayContent";
 
             if(!checkBlank(contentId)){
                 alert('내용을 입력해주세요');
@@ -186,7 +186,7 @@
             // type : "content" or "replayContent"
 
             let html = "";
-            html += '<div class="border-bottom ' + (type === 'content' ? 'ms-0' : 'ms-3') + ' mb-3 commentElement" id="' + data.commentId + '">';
+            html += '<div class="border-bottom ' + (type === 'content' ? 'ms-0' : 'ms-4') + ' mb-3 commentElement" id="' + data.commentId + '">';
             html += '<div class="d-flex justify-content-between">';
             html += '<div>' + data.name + '(' + data.userId + ')' + '</div>';
             html += '<div class="buttonDiv">';
@@ -199,7 +199,7 @@
             html += '<div>' + data.regDate + '</div>';
             html += '</div>';
             html += '<div>';
-            html += '<button class="btn btn-sm btn-success" type="button" onclick="openCommentReplyForm(' + data.commentId + ',\'' + data.userId + '\',\'' + data.name + '\')">답글</button>';
+            html += '<button class="btn btn-sm btn-success" type="button" onclick="openCommentReplyForm(' + data.commentId + ','+ data.parentId + ',\'' + data.userId + '\',\'' + data.name + '\')">답글</button>';
             html += '</div>';
             html += '</div>';
 
@@ -250,12 +250,12 @@
 
         let isCommentReplyFormOpen ='N';
         let prevCommentId;
-        function openCommentReplyForm(commentId, userId, name) {
+        function openCommentReplyForm(commentId, parentId, userId, name) {
 
             if(isCommentReplyFormOpen === 'Y'){
                 closeCommentReplyForm();
                 if(prevCommentId !== commentId){
-                    openCommentReplyForm(commentId, userId, name);
+                    openCommentReplyForm(commentId, parentId, userId, name);
                 }
             }else {
                 prevCommentId = commentId;
@@ -269,7 +269,7 @@
                 html += '<textarea type="text" class="form-control" id="replayContent"></textarea>';
                 html += '</div>';
                 html += '<div class="d-flex justify-content-end">';
-                html += '<button class="btn btn-sm btn-success submitBtn" type="button" onclick="insert(' + commentId + ')">등록</button>';
+                html += '<button class="btn btn-sm btn-success submitBtn" type="button" onclick="insert(' + commentId + ',' + parentId + ')">등록</button>';
                 html += '</div>';
                 html += '</div>';
 

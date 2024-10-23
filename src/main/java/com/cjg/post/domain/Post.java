@@ -48,7 +48,7 @@ public class Post {
 
 	private LocalDateTime modDate;
 
-	@OneToMany(mappedBy="post", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy="post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	@OrderBy("regDate asc")
 	@BatchSize(size=10)
 	private List<Comment> commentList;
