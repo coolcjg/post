@@ -16,7 +16,7 @@ public class ExceptionAdvice {
 
     //커스텀 에러 처리
     @ExceptionHandler({CustomException.class})
-    public ResponseEntity<Response> exceptionHandler(final CustomException e){
+    public ResponseEntity<Response<Void>> exceptionHandler(final CustomException e){
         return ResponseEntity.status(Integer.parseInt(e.getResultCode().getCode()))
                 .body(Response.fail(e.getResultCode()));
     }
