@@ -40,7 +40,7 @@
                 <div class="commentDiv">
 
                     <th:block th:each="obj : ${data.commentResponseDtoList}">
-                        <div class="border-bottom mb-3 commentElement" th:classappend="${obj.parentId == obj.commentId ? 'ms-0' : 'ms-4'}" th:id="${obj.commentId}">
+                        <div class="border-bottom mb-3 commentElement" th:classappend="${obj.parentId == obj.commentId ? 'ms-0 commentRoot' : 'ms-4'}" th:id="${obj.commentId}">
                             <div class="d-flex justify-content-between">
                                 <div th:text="|${obj.name}(${obj.userId})|"></div>
                                 <div class="buttonDiv" th:if="${#authentication.name} == ${obj.userId} and ${obj.deleted.toString().equals('N')}">
@@ -164,13 +164,12 @@
                 success: function (data, status, xhr) {
                     if(data.code === "201"){
                         alert('댓글 등록 성공');
+                        closeCommentReplyForm();
                         appendCommentDiv(contentId, data.data);
                         commentCountUp();
 
                         if(contentId === 'content'){
                             $("#content").val('');
-                        }else{
-                            closeCommentReplyForm();
                         }
                     }
                 },
@@ -186,7 +185,7 @@
             // type : "content" or "replayContent"
 
             let html = "";
-            html += '<div class="border-bottom ' + (type === 'content' ? 'ms-0' : 'ms-4') + ' mb-3 commentElement" id="' + data.commentId + '">';
+            html += '<div class="border-bottom ' + (type === 'content' ? 'ms-0 commentRoot' : 'ms-4') + ' mb-3 commentElement" id="' + data.commentId + '">';
             html += '<div class="d-flex justify-content-between">';
             html += '<div>' + data.name + '(' + data.userId + ')' + '</div>';
             html += '<div class="buttonDiv">';
@@ -208,9 +207,20 @@
                 target = $("#commentWriteForm");
                 target.before(html);
             } else {
-                target = $("#commentReplyForm");
-                target.before(html);
+                target = $("#" + data.parentId);
 
+                let flag = true;
+                while(flag){
+                    let next = target.next();
+
+                    if(!next.hasClass("commentRoot") && next.hasClass("commentElement")){
+                        target = next;
+                    }else{
+                        flag = false;
+                    }
+                }
+
+                target.after(html);
             }
         }
 
