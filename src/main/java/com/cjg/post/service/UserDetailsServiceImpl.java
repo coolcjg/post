@@ -28,9 +28,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
         User user = userRepository.findByUserId(userId);
-        Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
-        grantedAuthorities.add(new SimpleGrantedAuthority(UserRole.USER.getValue()));
-
         return new CustomUserDetails(user.getUserId(), aes256.decrypt(user.getName()), user.getAuth(), user.getPassword(), user.getImage());
     }
 }

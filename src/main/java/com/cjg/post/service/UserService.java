@@ -86,12 +86,9 @@ public class UserService {
 
             if(passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
 
-                Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
-                grantedAuthorities.add(new SimpleGrantedAuthority(UserRole.USER.getValue()));
-
                 UserDetails userDetails = userDetailsService.loadUserByUsername(requestDto.getUserId());
 
-                UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userDetails, requestDto.getPassword(), grantedAuthorities);
+                UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userDetails, requestDto.getPassword(), userDetails.getAuthorities());
                 Authentication authentication = authenticationManager.authenticate(token);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 String accessToken = jwt.createAccessToken(authentication);
