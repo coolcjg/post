@@ -4,6 +4,7 @@ import com.cjg.post.code.ResultCode;
 import com.cjg.post.exception.CustomException;
 import com.cjg.post.service.UserDetailsServiceImpl;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -54,7 +55,7 @@ public class JwtTokenProvider {
 				.setClaims(claims)
 				.setIssuedAt(now)
 				.setExpiration(expireDate)
-				.signWith(SignatureAlgorithm.HS256, secretKey)
+				.signWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
 				.compact();
 	}
 
@@ -67,7 +68,7 @@ public class JwtTokenProvider {
 				.setClaims(claims)
 				.setIssuedAt(now)
 				.setExpiration(expireDate)
-				.signWith(SignatureAlgorithm.HS256, secretKey)
+				.signWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
 				.compact();
 	}
 
@@ -83,7 +84,7 @@ public class JwtTokenProvider {
 				.setClaims(claims)
 				.setIssuedAt(now)
 				.setExpiration(expireDate)
-				.signWith(SignatureAlgorithm.HS256, secretKey)
+				.signWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
 				.compact();
 
 		// redis에 저장
@@ -109,8 +110,9 @@ public class JwtTokenProvider {
 	}
 
 	public String getUserPrincipal(String token){
-		return Jwts.parser().
-				setSigningKey(secretKey)
+		return Jwts.parserBuilder()
+				.setSigningKey(secretKey.getBytes())
+				.build()
 				.parseClaimsJws(token)
 				.getBody().getSubject();
 	}
@@ -143,7 +145,7 @@ public class JwtTokenProvider {
 	 */
 	public boolean validateToken(String[] token){
 		try{
-			Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token[0]);
+			Jwts.parserBuilder().setSigningKey(secretKey.getBytes()).build().parseClaimsJws(token[0]);
 			return true;
 		} catch(ExpiredJwtException e) {
 
@@ -164,7 +166,7 @@ public class JwtTokenProvider {
 
 	public boolean validateRefreshToken(String refreshToken){
 		try{
-			Jwts.parser().setSigningKey(secretKey).parseClaimsJws(refreshToken);
+			Jwts.parserBuilder().setSigningKey(secretKey.getBytes()).build().parseClaimsJws(refreshToken);
 			return true;
 		} catch(ExpiredJwtException e) {
 			throw new CustomException(ResultCode.JWT_EXPIRE);
