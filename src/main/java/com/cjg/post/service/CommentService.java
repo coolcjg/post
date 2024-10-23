@@ -42,9 +42,9 @@ public class CommentService {
                 .content(dto.getContent())
                 .build();
 
-        if(dto.getParentId() != null){
-            Comment comment1 = commentRepository.findById(dto.getParentId()).orElseThrow(() -> new CustomException(ResultCode.COMMENT_SEARCH_NOT_FOUND));
-            comment.setComment(comment1);
+        if(dto.getParentId() != 0){
+            Comment parent = commentRepository.findById(dto.getParentId()).orElseThrow(() -> new CustomException(ResultCode.COMMENT_SEARCH_NOT_FOUND));
+            comment.setParent(parent);
         }
 
         Comment result = commentRepository.save(comment);
@@ -69,7 +69,7 @@ public class CommentService {
     private CommentResponseDto commentToDto(Comment comment){
         return CommentResponseDto.builder()
                 .commentId(comment.getCommentId())
-                .parentId(comment.getComment() != null ? comment.getComment().getCommentId() : 0)
+                .parentId(comment.getParent() != null ? comment.getParent().getCommentId() : 0)
                 .postId(comment.getPost().getPostId())
                 .userId(comment.getUser().getUserId())
                 .name(aes256.decrypt(comment.getUser().getName()))

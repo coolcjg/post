@@ -1,6 +1,7 @@
 package com.cjg.post.domain;
 
 import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import lombok.*;
@@ -47,7 +48,7 @@ public class Post {
 
 	private LocalDateTime modDate;
 
-	@OneToMany(mappedBy="post", orphanRemoval = true)
+	@OneToMany(mappedBy="post", cascade = CascadeType.ALL, orphanRemoval = true)
 	@OrderBy("regDate asc")
 	@BatchSize(size=10)
 	private List<Comment> commentList;

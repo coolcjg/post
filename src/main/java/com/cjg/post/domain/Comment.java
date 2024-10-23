@@ -4,10 +4,11 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -30,7 +31,7 @@ public class Comment {
      */
     @ManyToOne
     @JoinColumn(name="parent_id")
-    private Comment comment;
+    private Comment parent;
 
     @ManyToOne
     @JoinColumn(name="user_id")
@@ -46,6 +47,14 @@ public class Comment {
     @Column(nullable = false)
     @ColumnDefault("'N'")
     private Character deleted;
+
+    @OneToMany(mappedBy = "parent", orphanRemoval = true)
+    private List<Comment> children = new ArrayList<>();
+
+    //부모댓글 수정
+    public void updateParent(Comment parent){
+        this.parent = parent;
+    }
 
     @CreationTimestamp
     private LocalDateTime regDate;

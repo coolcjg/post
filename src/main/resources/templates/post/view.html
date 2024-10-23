@@ -57,6 +57,9 @@
                             <div>
                                 <div th:text="${obj.regDate}"></div>
                             </div>
+                            <div>
+                                <button class="btn btn-sm btn-success" type="button" th:onclick="openCommentReplyForm([[${obj.commentId}]], [[${obj.userId}]], [[${obj.name}]])">답글</button>
+                            </div>
                         </div>
                     </th:block>
 
@@ -67,7 +70,7 @@
                             <textarea type="text" class="form-control" id="content"></textarea>
                         </div>
                         <div class="d-flex justify-content-end">
-                            <button class="btn btn-sm btn-success submitBtn" type="button" th:onclick="insert()">등록</button>
+                            <button class="btn btn-sm btn-success submitBtn" type="button" th:onclick="insert(0)">등록</button>
                         </div>
                     </div>
 
@@ -130,9 +133,11 @@
             enableButton();
         }
 
-        function insert(){
+        function insert(parentId){
 
-            if(!checkBlank("content")){
+            const contentId = parentId === 0 ? "content" : "replayContent";
+
+            if(!checkBlank(contentId)){
                 alert('내용을 입력해주세요');
                 return;
             }
@@ -146,7 +151,8 @@
             const json = JSON.stringify({
                 userId : '[[${#authentication.name}]]'
                 , postId : `[[${data.postId}]]`
-                , content : $("#content").val()
+                , parentId : parentId
+                , content : $("#" + contentId).val()
             })
 
             $.ajax({
@@ -158,9 +164,14 @@
                 success: function (data, status, xhr) {
                     if(data.code === "201"){
                         alert('댓글 등록 성공');
-                        appendCommentDiv(data.data);
+                        appendCommentDiv(contentId, data.data);
                         commentCountUp();
-                        $("#content").val('');
+
+                        if(contentId === 'content'){
+                            $("#content").val('');
+                        }else{
+                            closeCommentReplyForm();
+                        }
                     }
                 },
                 error: function (data, status, xhr) {
@@ -171,14 +182,15 @@
             enableButton();
         }
 
-        function appendCommentDiv(data) {
+        function appendCommentDiv(type, data) {
+            // type : "content" or "replayContent"
 
             let html = "";
-            html += '<div class="border-bottom ms-0 mb-3 commentElement" id="'+data.commentId+'">';
+            html += '<div class="border-bottom ' + (type === 'content' ? 'ms-0' : 'ms-3') + ' mb-3 commentElement" id="' + data.commentId + '">';
             html += '<div class="d-flex justify-content-between">';
-            html += '<div>' + data.name+'('+data.userId+')' + '</div>';
+            html += '<div>' + data.name + '(' + data.userId + ')' + '</div>';
             html += '<div class="buttonDiv">';
-            html += '<button class="btn btn-sm btn-success submitBtn" type="button" onclick="openCommentModifyForm(\'' + data.commentId + '\',\'' + data.userId  + '\',\'' +  data.name + '\')">수정</button>';
+            html += '<button class="btn btn-sm btn-success submitBtn" type="button" onclick="openCommentModifyForm(\'' + data.commentId + '\',\'' + data.userId + '\',\'' + data.name + '\')">수정</button>';
             html += '<button class="btn btn-sm btn-danger ms-1 submitBtn" type="button" onclick="deleteComment(\'' + data.commentId + '\')">삭제</button>';
             html += '</div>';
             html += '</div>';
@@ -186,16 +198,30 @@
             html += '<div>';
             html += '<div>' + data.regDate + '</div>';
             html += '</div>';
+            html += '<div>';
+            html += '<button class="btn btn-sm btn-success" type="button" onclick="openCommentReplyForm(' + data.commentId + ',\'' + data.userId + '\',\'' + data.name + '\')">답글</button>';
+            html += '</div>';
             html += '</div>';
 
-            const target = $("#commentWriteForm");
-            target.before(html);
+            let target;
+            if (type === 'content') {
+                target = $("#commentWriteForm");
+                target.before(html);
+            } else {
+                target = $("#commentReplyForm");
+                target.before(html);
 
+            }
         }
 
-        function commentCountUp(){
+        function closeCommentReplyForm(){
+            $("#commentReplyForm").remove();
+            isCommentReplyFormOpen ='N';
+        }
+
+        function commentCountUp() {
             let count = Number($("#commentCount").text());
-            $("#commentCount").text(count+1);
+            $("#commentCount").text(count + 1);
         }
 
         function openCommentModifyForm(commentId, userId, name) {
@@ -221,6 +247,37 @@
             target.after(html);
         }
 
+
+        let isCommentReplyFormOpen ='N';
+        let prevCommentId;
+        function openCommentReplyForm(commentId, userId, name) {
+
+            if(isCommentReplyFormOpen === 'Y'){
+                closeCommentReplyForm();
+                if(prevCommentId !== commentId){
+                    openCommentReplyForm(commentId, userId, name);
+                }
+            }else {
+                prevCommentId = commentId;
+
+                let target = $("#" + commentId);
+
+                let html = "";
+                html += '<div id="commentReplyForm" class="border ps-3 mb-3">';
+                html += '<div>' + name + '</div>';
+                html += '<div>';
+                html += '<textarea type="text" class="form-control" id="replayContent"></textarea>';
+                html += '</div>';
+                html += '<div class="d-flex justify-content-end">';
+                html += '<button class="btn btn-sm btn-success submitBtn" type="button" onclick="insert(' + commentId + ')">등록</button>';
+                html += '</div>';
+                html += '</div>';
+
+                target.after(html);
+                isCommentReplyFormOpen = 'Y';
+            }
+        }
+
         function closeCommentModifyForm(commentId) {
             $(".commentDiv").find('div.commentModForm').remove();
 
@@ -232,10 +289,10 @@
             }
         }
 
-        function commentModifyAjax(commentId){
+        function commentModifyAjax(commentId) {
             disableButton();
 
-            if($(".commentModForm").find('textarea').val().trim() === ''){
+            if ($(".commentModForm").find('textarea').val().trim() === '') {
                 alert('내용을 입력해주세요');
                 enableButton();
                 return;
